@@ -1,15 +1,15 @@
-#ifndef PhoenixSensorArea_H
-#define PhoenixSensorArea_H
+#ifndef PhoenixMatrixRegion_H
+#define PhoenixMatrixRegion_H
 
 #include <Eigen/Dense>
 
 namespace Phoenix {
 
-class SensorArea {
+class MatrixRegion {
 public:
     // Constructor
-    SensorArea(int cols, int rows, float left, float right, float bottom, float top);
-    virtual ~SensorArea() = default;
+    MatrixRegion(int cols, int rows, float left, float right, float bottom, float top);
+    virtual ~MatrixRegion() = default;
 
 public:
     // Number of columns in the detector (pixels)
@@ -21,13 +21,22 @@ public:
         return matrix.rows();
     };
 
+    int index_x(float x) const;
+    int index_y(float y) const;
+
+    bool inside(float x, float y) const;
+
+    bool interpolate(float x, float y, float& value) const;
+    bool get_value(float x, float y, float& value) const;
+
 public:
     float left;   ///< Left boundary of the rectangular area (x-coordinate)
     float right;  ///< Right boundary of the rectangular area (x-coordinate)
     float bottom; ///< Bottom boundary of the rectangular area (y-coordinate)
     float top;    ///< Top boundary of the rectangular area (y-coordinate)
 
-    Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> matrix; ///< Used to store measurement data
+private:
+    Eigen::MatrixXf matrix; ///< Used to store measurement data
 };
 } // namespace Phoenix
 
