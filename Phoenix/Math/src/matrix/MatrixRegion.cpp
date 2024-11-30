@@ -38,6 +38,20 @@ bool MatrixRegion::interpolate(float x, float y, float& value) const {
     return true;
 }
 //------------------------------------------
+float MatrixRegion::get_value(float x, float y) const {
+    int row = index_x(x);
+    int col = index_y(y);
+    if (row < 0)
+        row = 0;
+    else if (row >= matrix.rows())
+        row = matrix.rows() - 1;
+    if (col < 0)
+        col = 0;
+    else if (col >= matrix.cols())
+        col = matrix.cols() - 1;
+    return matrix(row, col);
+}
+//------------------------------------------
 bool MatrixRegion::get_value(float x, float y, float& value) const {
     // left/right is the outer boundary of the rectangular area
     // bottom/top is the outer boundary of the rectangular area
