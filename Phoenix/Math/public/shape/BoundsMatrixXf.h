@@ -1,7 +1,7 @@
-#ifndef Phoenix_MatrixRegion_H
-#define Phoenix_MatrixRegion_H
+#ifndef Phoenix_BoundsMatrixXf_H
+#define Phoenix_BoundsMatrixXf_H
 
-#include "matrix/Bounds2f.hpp"
+#include "shape/Bounds2f.hpp"
 #include "utility/Code.h"
 #include <Eigen/Dense>
 
@@ -13,11 +13,11 @@ struct ResultLimits {
     bool  is_valid;
 };
 
-class MatrixRegion {
+class BoundsMatrixXf {
 public:
     // Constructor
-    MatrixRegion(int cols, int rows, float left, float right, float bottom, float top);
-    virtual ~MatrixRegion() = default;
+    BoundsMatrixXf(int cols, int rows, float left, float right, float bottom, float top);
+    virtual ~BoundsMatrixXf() = default;
 
 public:
     // Number of columns in the detector (pixels)
