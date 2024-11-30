@@ -3,12 +3,10 @@
 namespace Phoenix {
 
 //------------------------------------------
-BoundsMatrixXf::BoundsMatrixXf(int cols, int rows, float left, float right, float bottom, float top)
-    : left(left)
-    , right(right)
-    , bottom(bottom)
-    , top(top) {
-    matrix.resize(rows, cols); // Initialize matrix based on number of rows and columns
+BoundsMatrixXf::BoundsMatrixXf(int cols, int rows, float left, float bottom, float right, float top)
+    : Bounds2f{left, bottom, right, top}
+    , matrix(rows, cols) {
+    // empty
 }
 //------------------------------------------
 int BoundsMatrixXf::index_x(float x) const {
@@ -67,17 +65,17 @@ bool BoundsMatrixXf::get_value(float x, float y, float& value) const {
 }
 //------------------------------------------
 Code BoundsMatrixXf::calculate(const Bounds2f& bounds, ResultLimits& result) const {
-    // TODO 假设您有一个方法可以获取矩阵中指定区域的最小和最大值
-    // 这里我们简单地假设这些值是已知的
-    float minValue = 0.0f;   // 实际的最小测量值
-    float maxValue = 100.0f; // 实际的最大测量值
+    // TODO Assume you have a method to get the minimum and maximum values in the specified region
+    // of the matrix Here we simply assume these values are known
+    float minValue = 0.0f;   // Actual minimum measurement value
+    float maxValue = 100.0f; // Actual maximum measurement value
 
-    // 将获取到的值存储在result结构体中
+    // Store the obtained values in the result structure
     result.min      = minValue;
     result.max      = maxValue;
-    result.is_valid = true; // 假设获取的值是有效的
+    result.is_valid = true; // Assume the obtained values are valid
 
-    return 0; // 返回成功
+    return 0; // Return success
 }
 
 } // namespace Phoenix

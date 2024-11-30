@@ -7,12 +7,20 @@
 namespace Phoenix {
 class Bounds2f {
 public:
+    // Default constructor
     Bounds2f()
-        : b_min(Eigen::Vector2f::Zero())
-        , b_max(Eigen::Vector2f::Zero()) {}
+        : b_min(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity())
+        , b_max(-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity()) {}
+
+    // Constructor with min and max points
     Bounds2f(const Eigen::Vector2f& min, const Eigen::Vector2f& max)
         : b_min(min)
         , b_max(max) {}
+
+    // Constructor with left, bottom, right, and top values
+    Bounds2f(float left, float bottom, float right, float top)
+        : b_min(left, bottom)
+        , b_max(right, top) {}
 
     // Check if a point is inside the bounding box
     bool contains(const Eigen::Vector2f& point) const {
@@ -38,8 +46,19 @@ public:
     }
 
 public:
-    Eigen::Vector2f b_min;
-    Eigen::Vector2f b_max;
+    union
+    {
+        struct {
+            Eigen::Vector2f b_min;
+            Eigen::Vector2f b_max;
+        };
+        struct {
+            float left;   ///< Left boundary of the rectangular area (x-coordinate)
+            float bottom; ///< Bottom boundary of the rectangular area (y-coordinate)
+            float right;  ///< Right boundary of the rectangular area (x-coordinate)
+            float top;    ///< Top boundary of the rectangular area (y-coordinate)
+        };
+    };
 };
 } // namespace Phoenix
 

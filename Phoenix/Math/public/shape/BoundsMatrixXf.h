@@ -13,7 +13,7 @@ struct ResultLimits {
     bool  is_valid;
 };
 
-class BoundsMatrixXf {
+class BoundsMatrixXf : public Bounds2f {
 public:
     // Constructor
     BoundsMatrixXf(int cols, int rows, float left, float right, float bottom, float top);
@@ -49,12 +49,6 @@ public:
     float get_value(float x, float y) const;
 
     Code calculate(const Bounds2f& bounds, ResultLimits& result) const;
-
-public:
-    float left;   ///< Left boundary of the rectangular area (x-coordinate)
-    float right;  ///< Right boundary of the rectangular area (x-coordinate)
-    float bottom; ///< Bottom boundary of the rectangular area (y-coordinate)
-    float top;    ///< Top boundary of the rectangular area (y-coordinate)
 
 private:
     Eigen::MatrixXf matrix; ///< Used to store measurement data
