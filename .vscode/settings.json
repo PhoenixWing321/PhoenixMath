@@ -78,6 +78,17 @@
                 "alignedvector3": "cpp",
                 "fft": "cpp",
                 "mprealsupport": "cpp",
-                "nnls": "cpp"
+                "nnls": "cpp",
+                "core": "cpp",
+                "superlusupport": "cpp",
+                "*.traits": "cpp",
+                "autodiff": "cpp",
+                "bvh": "cpp",
+                "eulerangles": "cpp",
+                "kroneckerproduct": "cpp",
+                "numericaldiff": "cpp",
+                "openglsupport": "cpp",
+                "specialfunctions": "cpp",
+                "splines": "cpp"
         }
 }

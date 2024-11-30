@@ -1,11 +1,12 @@
-#ifndef PwCode_H
-#define PwCode_H
+#ifndef Phoenix_Code_H
+#define Phoenix_Code_H
 
+namespace Phoenix {
 // error code, 0 is ok, other is error code
-typedef unsigned int PwCode;
- 
+typedef unsigned int Code;
+
 #define PW_SUCCEEDED(Status) ((unsigned int)(Status) == 0)
- 
+
 #define PW_FAILED(Status) ((unsigned int)(Status) > 0)
 
 #define PW_S_OK 0
@@ -40,4 +41,5 @@ typedef unsigned int PwCode;
 /** @brief float/double inf */
 #define PW_E_FLOAT_INF 10
 
+}; // namespace Phoenix
 #endif

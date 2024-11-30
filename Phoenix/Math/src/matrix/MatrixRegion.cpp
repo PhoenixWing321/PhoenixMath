@@ -64,6 +64,20 @@ bool MatrixRegion::get_value(float x, float y, float& value) const {
     int col = index_y(y);
     value   = matrix(row, col);
     return true;
-};
+}
+//------------------------------------------
+Code MatrixRegion::calculate(const Bounds2f& bounds, ResultLimits& result) const {
+    // TODO 假设您有一个方法可以获取矩阵中指定区域的最小和最大值
+    // 这里我们简单地假设这些值是已知的
+    float minValue = 0.0f;   // 实际的最小测量值
+    float maxValue = 100.0f; // 实际的最大测量值
+
+    // 将获取到的值存储在result结构体中
+    result.min      = minValue;
+    result.max      = maxValue;
+    result.is_valid = true; // 假设获取的值是有效的
+
+    return 0; // 返回成功
+}
 
 } // namespace Phoenix

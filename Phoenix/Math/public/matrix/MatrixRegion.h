@@ -1,9 +1,17 @@
-#ifndef PhoenixMatrixRegion_H
-#define PhoenixMatrixRegion_H
+#ifndef Phoenix_MatrixRegion_H
+#define Phoenix_MatrixRegion_H
 
+#include "matrix/Bounds2f.hpp"
+#include "utility/Code.h"
 #include <Eigen/Dense>
 
 namespace Phoenix {
+
+struct ResultLimits {
+    float min;
+    float max;
+    bool  is_valid;
+};
 
 class MatrixRegion {
 public:
@@ -39,6 +47,8 @@ public:
      *  return the boudary value
      */
     float get_value(float x, float y) const;
+
+    Code calculate(const Bounds2f& bounds, ResultLimits& result) const;
 
 public:
     float left;   ///< Left boundary of the rectangular area (x-coordinate)
