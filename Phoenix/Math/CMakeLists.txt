@@ -12,6 +12,7 @@ include_directories(
 file(GLOB_RECURSE SRC_DIR_LIST "*.cpp")
 
 add_library(PhoenixMath ${SRC_DIR_LIST})
-target_include_directories(PhoenixMath PUBLIC ./public)
+target_include_directories(PhoenixMath PUBLIC ./public 
+${ROOT_3rdParty}/eigen)
 
 message("<<============END phoenix/" ${PROJECT_NAME} " ===================")

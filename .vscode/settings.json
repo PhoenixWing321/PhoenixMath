@@ -70,6 +70,14 @@
                 "unordered_map": "cpp",
                 "unordered_set": "cpp",
                 "variant": "cpp",
-                "algorithm": "cpp"
+                "algorithm": "cpp",
+                "*.inc": "cpp",
+                "*.evaluator": "cpp",
+                "*.expression": "cpp",
+                "adolcforward": "cpp",
+                "alignedvector3": "cpp",
+                "fft": "cpp",
+                "mprealsupport": "cpp",
+                "nnls": "cpp"
         }
 }
