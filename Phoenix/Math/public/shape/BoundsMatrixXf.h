@@ -10,13 +10,13 @@ namespace Phoenix {
 struct ResultLimits {
     float min;
     float max;
-    bool  is_valid;
+    int   code; // 0: success, otherwise: ng
 };
 
 class BoundsMatrixXf : public Bounds2f {
 public:
     // Constructor
-    BoundsMatrixXf(int cols, int rows, float left, float right, float bottom, float top);
+    BoundsMatrixXf(int rows, int cols, float left, float right, float bottom, float top);
     virtual ~BoundsMatrixXf() = default;
 
 public:
@@ -48,7 +48,11 @@ public:
      */
     float get_value(float x, float y) const;
 
-    Code calculate(const Bounds2f& bounds, ResultLimits& result) const;
+    void calculate(const Bounds2f& bounds, ResultLimits& result) const;
+
+    void calculate(const Eigen::Vector2f& pt, ResultLimits& result) const;
+
+    void fill_pattern();
 
 private:
     Eigen::MatrixXf matrix; ///< Used to store measurement data

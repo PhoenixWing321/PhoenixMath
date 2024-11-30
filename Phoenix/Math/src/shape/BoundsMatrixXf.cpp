@@ -3,7 +3,7 @@
 namespace Phoenix {
 
 //------------------------------------------
-BoundsMatrixXf::BoundsMatrixXf(int cols, int rows, float left, float bottom, float right, float top)
+BoundsMatrixXf::BoundsMatrixXf(int rows, int cols, float left, float bottom, float right, float top)
     : Bounds2f{left, bottom, right, top}
     , matrix(rows, cols) {
     // empty
@@ -64,18 +64,73 @@ bool BoundsMatrixXf::get_value(float x, float y, float& value) const {
     return true;
 }
 //------------------------------------------
-Code BoundsMatrixXf::calculate(const Bounds2f& bounds, ResultLimits& result) const {
-    // TODO Assume you have a method to get the minimum and maximum values in the specified region
-    // of the matrix Here we simply assume these values are known
-    float minValue = 0.0f;   // Actual minimum measurement value
-    float maxValue = 100.0f; // Actual maximum measurement value
+void BoundsMatrixXf::calculate(const Bounds2f& bounds, ResultLimits& result) const {
+    // Calculate the indices for the bounding box
+    int startX = index_x(bounds.left);
+    int startY = index_y(bounds.bottom);
+    int endX   = index_x(bounds.right);
+    int endY   = index_y(bounds.top);
+
+    // Ensure the indices are within the matrix bounds
+    if (startX < 0 || startY < 0 || endX >= matrix.cols() || endY >= matrix.rows()) {
+        result.min  = std::numeric_limits<float>::max();
+        result.max  = std::numeric_limits<float>::lowest();
+        result.code = 1; // Indices out of bounds;
+        return;
+    }
+
+    // Initialize min and max values
+    float minValue = std::numeric_limits<float>::max();
+    float maxValue = std::numeric_limits<float>::lowest();
+
+    // Iterate over the specified region of the matrix
+    for (int y = startY; y <= endY; ++y) {
+        for (int x = startX; x <= endX; ++x) {
+            float value = matrix(y, x);
+            if (value < minValue) {
+                minValue = value;
+            }
+            if (value > maxValue) {
+                maxValue = value;
+            }
+        }
+    }
 
     // Store the obtained values in the result structure
-    result.min      = minValue;
-    result.max      = maxValue;
-    result.is_valid = true; // Assume the obtained values are valid
-
-    return 0; // Return success
+    result.min  = minValue;
+    result.max  = maxValue;
+    result.code = 0; // Assume the obtained values are valid
 }
+//------------------------------------------
+void BoundsMatrixXf::calculate(const Eigen::Vector2f& pt, ResultLimits& result) const {
+    // Calculate the indices for the bounding box
+    int col = index_x(pt.x());
+    int row = index_y(pt.y());
 
+    // Ensure the indices are within the matrix bounds
+    if (col < 0 || row < 0 || col >= matrix.cols() || row >= matrix.rows()) {
+
+        result.min  = std::numeric_limits<float>::max();
+        result.max  = std::numeric_limits<float>::lowest();
+        result.code = 1; // Indices out of bounds;
+        return;
+    }
+
+    float value = matrix(row, col);
+
+    // Store the obtained values in the result structure
+    result.min  = value;
+    result.max  = value;
+    result.code = 0; // Assume the obtained values are valid
+}
+//------------------------------------------
+void BoundsMatrixXf::fill_pattern() {
+    for (int i = 0; i < matrix.rows(); ++i) {
+        for (int j = 0; j < matrix.cols(); ++j) {
+            matrix(i, j) = static_cast<float>(i + j);
+        }
+    }
+
+    std::cout << matrix << std::endl;
+}
 } // namespace Phoenix

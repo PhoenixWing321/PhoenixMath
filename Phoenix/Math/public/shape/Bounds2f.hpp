@@ -9,8 +9,8 @@ class Bounds2f {
 public:
     // Default constructor
     Bounds2f()
-        : b_min(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity())
-        , b_max(-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity()) {}
+        : b_min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max())
+        , b_max(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()) {}
 
     // Constructor with min and max points
     Bounds2f(const Eigen::Vector2f& min, const Eigen::Vector2f& max)
