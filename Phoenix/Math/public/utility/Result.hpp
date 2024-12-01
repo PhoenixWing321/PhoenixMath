@@ -29,15 +29,28 @@ struct LimitsRst : public Result {
     float max; ///< max value (float format)
 };
 
+struct LimitsBoundsIndexRst : public LimitsRst {
+    virtual ~LimitsBoundsIndexRst() = default;
+
+    glm::dvec2 index_min; ///< index of min value(double format)
+    glm::dvec2 index_max; ///< index of max value(double format)
+};
+
 } // namespace Phoenix
 
 inline std::ostream& operator<<(std::ostream& os, const Phoenix::ValueIndexRst& rst) {
-    os << "{" << rst.code << "," << rst.value << "," << rst.row << "," << rst.col << "}";
+    os << "{" << rst.code << "," << rst.value << ",(" << rst.row << "," << rst.col << ")}";
+    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Phoenix::LimitsBoundsIndexRst& rst) {
+    os << "{" << rst.code << ",[" << rst.min << "~" << rst.max << "],{" << rst.index_min.x << ","
+       << rst.index_min.y << "},{" << rst.index_max.x << "," << rst.index_max.y << "}}";
     return os;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const Phoenix::LimitsRst& rst) {
-    os << "{" << rst.code << "," << rst.min << "," << rst.max << "}";
+    os << "{" << rst.code << ",[" << rst.min << "~" << rst.max << "]}";
     return os;
 }
 #endif

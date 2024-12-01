@@ -98,7 +98,7 @@ void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const 
     int endRow   = row_int(bounds.top);
 
     // Ensure the indices are within the matrix bounds
-    if (startCol < 0 || startRow < 0 || endCol >= matrix.cols() || endRow >= matrix.rows()) {
+    if (startCol < 0 || startRow < 0 || endCol < 0 || endRow < 0) {
         result.min  = std::numeric_limits<float>::max();
         result.max  = std::numeric_limits<float>::lowest();
         result.code = 1; // Indices out of bounds;
