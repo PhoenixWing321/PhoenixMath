@@ -1,5 +1,5 @@
-#ifndef Phoenix_Bounds2f_H
-#define Phoenix_Bounds2f_H
+#ifndef PHOENIX_Bounds2f_H
+#define PHOENIX_Bounds2f_H
 
 #include "glm/glm.hpp"
 #include <Eigen/Dense>
@@ -23,6 +23,12 @@ public:
         : b_min(left, bottom)
         , b_max(right, top) {}
 
+public:
+    bool operator==(const Bounds2f& other) const {
+        return b_min == other.b_min && b_max == other.b_max;
+    }
+
+public:
     // Check if a point is inside the bounding box
     bool contains(const glm::vec2& point) const {
         return (point.x >= b_min.x && point.x <= b_max.x && point.y >= b_min.y &&

@@ -1,5 +1,5 @@
-#ifndef Phoenix_Code_H
-#define Phoenix_Code_H
+#ifndef PHOENIX_Code_H
+#define PHOENIX_Code_H
 
 namespace Phoenix {
 // error code, 0 is ok, other is error code
