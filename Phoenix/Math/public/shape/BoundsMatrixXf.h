@@ -1,6 +1,7 @@
 #ifndef Phoenix_BoundsMatrixXf_H
 #define Phoenix_BoundsMatrixXf_H
 
+#include "glm/glm.hpp"
 #include "shape/Bounds2f.hpp"
 #include "utility/Code.h"
 #include <Eigen/Dense>
@@ -16,7 +17,7 @@ struct ResultLimits {
 class BoundsMatrixXf : public Bounds2f {
 public:
     // Constructor
-    BoundsMatrixXf(int rows, int cols, float left, float right, float bottom, float top);
+    BoundsMatrixXf(int rows, int cols, float left, float bottom, float right, float top);
     virtual ~BoundsMatrixXf() = default;
 
 public:
@@ -50,7 +51,7 @@ public:
 
     void calculate(const Bounds2f& bounds, ResultLimits& result) const;
 
-    void calculate(const Eigen::Vector2f& pt, ResultLimits& result) const;
+    void calculate(const glm::vec2& pt, ResultLimits& result) const;
 
     void fill_pattern();
 

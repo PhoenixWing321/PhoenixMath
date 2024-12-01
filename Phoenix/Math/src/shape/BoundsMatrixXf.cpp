@@ -102,10 +102,10 @@ void BoundsMatrixXf::calculate(const Bounds2f& bounds, ResultLimits& result) con
     result.code = 0; // Assume the obtained values are valid
 }
 //------------------------------------------
-void BoundsMatrixXf::calculate(const Eigen::Vector2f& pt, ResultLimits& result) const {
+void BoundsMatrixXf::calculate(const glm::vec2& pos, ResultLimits& result) const {
     // Calculate the indices for the bounding box
-    int col = index_x(pt.x());
-    int row = index_y(pt.y());
+    int col = index_x(pos.x);
+    int row = index_y(pos.y);
 
     // Ensure the indices are within the matrix bounds
     if (col < 0 || row < 0 || col >= matrix.cols() || row >= matrix.rows()) {

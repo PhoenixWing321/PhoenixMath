@@ -6,6 +6,7 @@ include_directories(
   ${ROOT_3rdParty}/spdlog/include
   ${ROOT_3rdParty}/json/include
   ${ROOT_3rdParty}/eigen
+  ${ROOT_3rdParty}/glm
   ./public
 )
 

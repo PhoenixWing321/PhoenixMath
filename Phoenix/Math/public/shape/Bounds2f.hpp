@@ -1,6 +1,7 @@
 #ifndef Phoenix_Bounds2f_H
 #define Phoenix_Bounds2f_H
 
+#include "glm/glm.hpp"
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -13,7 +14,7 @@ public:
         , b_max(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()) {}
 
     // Constructor with min and max points
-    Bounds2f(const Eigen::Vector2f& min, const Eigen::Vector2f& max)
+    Bounds2f(const glm::vec2& min, const glm::vec2& max)
         : b_min(min)
         , b_max(max) {}
 
@@ -23,34 +24,34 @@ public:
         , b_max(right, top) {}
 
     // Check if a point is inside the bounding box
-    bool contains(const Eigen::Vector2f& point) const {
-        return (point.x() >= b_min.x() && point.x() <= b_max.x() && point.y() >= b_min.y() &&
-                point.y() <= b_max.y());
+    bool contains(const glm::vec2& point) const {
+        return (point.x >= b_min.x && point.x <= b_max.x && point.y >= b_min.y &&
+                point.y <= b_max.y);
     }
 
     // Get the center of the bounding box
-    Eigen::Vector2f center() const {
+    glm::vec2 center() const {
         return (b_min + b_max) / 2.0f;
     }
 
     // Expand the bounding box to include a point
-    void expand(const Eigen::Vector2f& point) {
-        b_min = b_min.cwiseMin(point);
-        b_max = b_max.cwiseMax(point);
+    void expand(const glm::vec2& pos) {
+        b_min = glm::min(pos, b_min);
+        b_max = glm::max(pos, b_max);
     }
 
     // Merge another bounding box into this one
     void expand(const Bounds2f& other) {
-        b_min = b_min.cwiseMin(other.b_min);
-        b_max = b_max.cwiseMax(other.b_max);
+        b_min = glm::min(other.b_min, b_min);
+        b_max = glm::max(other.b_max, b_max);
     }
 
 public:
     union
     {
         struct {
-            Eigen::Vector2f b_min;
-            Eigen::Vector2f b_max;
+            glm::vec2 b_min;
+            glm::vec2 b_max;
         };
         struct {
             float left;   ///< Left boundary of the rectangular area (x-coordinate)
