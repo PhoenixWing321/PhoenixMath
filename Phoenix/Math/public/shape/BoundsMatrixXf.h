@@ -19,12 +19,12 @@ public:
 public:
     // Number of columns in the detector (pixels)
     int cols() const {
-        return matrix.cols();
+        return static_cast<int>(matrix.cols());
     };
 
     // Number of rows in the detector (pixels)
     int rows() const {
-        return matrix.rows();
+        return static_cast<int>(matrix.rows());
     };
 
     /**
@@ -75,7 +75,7 @@ public:
      * @param x x-coordinate
      * @param y y-coordinate
      * @return float, if x or y are outside the valid range,
-     *  return the boudary value
+     *  return the boundary value
      */
     float get_value(float x, float y) const;
 

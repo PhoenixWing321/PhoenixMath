@@ -90,5 +90,8 @@
                 "openglsupport": "cpp",
                 "specialfunctions": "cpp",
                 "splines": "cpp"
-        }
+        },
+        "cSpell.words": [
+                "Eigen"
+        ]
 }

@@ -16,7 +16,7 @@ BoundsMatrixXf::BoundsMatrixXf(int rows, int cols, float left, float bottom, flo
 }
 //------------------------------------------
 int BoundsMatrixXf::col_int(double x) const {
-    const int count = matrix.cols();
+    const int count = static_cast<int>(matrix.cols());
     if (count == 0) return -1;
 
     // here use x/left/right to calculate the index (double ratio)
@@ -30,7 +30,7 @@ int BoundsMatrixXf::col_int(double x) const {
 //------------------------------------------
 int BoundsMatrixXf::row_int(double y) const {
     // get row form y if outside the bounds, return -1
-    const int count = matrix.rows();
+    const int count = static_cast<int>(matrix.rows());
     if (count == 0) return -1;
 
     // here use y/bottom/top to calculate the index (double ratio)
@@ -67,11 +67,11 @@ float BoundsMatrixXf::get_value(float x, float y) const {
     if (row < 0)
         row = 0;
     else if (row >= matrix.rows())
-        row = matrix.rows() - 1;
+        row = static_cast<int>(matrix.rows()) - 1;
     if (col < 0)
         col = 0;
     else if (col >= matrix.cols())
-        col = matrix.cols() - 1;
+        col = static_cast<int>(matrix.cols()) - 1;
     return matrix(row, col);
 }
 //------------------------------------------
