@@ -37,14 +37,13 @@ TEST_CASE("BoundsMatrixXf::fill_pattern", "[BoundsMatrixXf]") {
     Phoenix::BoundsMatrixXf area(5, 10, 0.f, 0.f, 100.f, 50.f);
     area.fill_pattern();
 
-    SECTION("check (i,j) funcion to touch the matrix") {
+    SECTION("check (i,j) function to touch the matrix") {
         auto& matrix = area.matrix;
         cout << " Bounds Matrix:" << endl;
-        cout << " x range :" << area.left << "~" << area.right
-             << ", segment = " << (area.right - area.left) / area.cols()
+        cout << "Bounds : " << (Phoenix::Bounds2f&)area << endl;
+        cout << "x segment = " << (area.right - area.left) / area.cols()
              << ", cols = " << matrix.cols() << endl;
-        cout << " y range :" << area.bottom << "~" << area.top
-             << ", segment = " << (area.top - area.bottom) / area.rows()
+        cout << "y segment = " << (area.top - area.bottom) / area.rows()
              << ", rows = " << matrix.rows() << endl;
         std::cout << matrix << std::endl;
 

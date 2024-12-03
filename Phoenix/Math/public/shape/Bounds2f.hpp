@@ -69,4 +69,9 @@ public:
 };
 } // namespace Phoenix
 
+inline std::ostream& operator<<(std::ostream& os, const Phoenix::Bounds2f& bounds) {
+    os << "{(" << bounds.left << ", " << bounds.bottom << "), (" << bounds.right << ", "
+       << bounds.top << ")}";
+    return os;
+}
 #endif

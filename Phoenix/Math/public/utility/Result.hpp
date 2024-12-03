@@ -39,18 +39,18 @@ struct LimitsBoundsIndexRst : public LimitsRst {
 } // namespace Phoenix
 
 inline std::ostream& operator<<(std::ostream& os, const Phoenix::ValueIndexRst& rst) {
-    os << "{" << rst.code << "," << rst.value << ",(" << rst.row << "," << rst.col << ")}";
+    os << "{" << rst.code << ", " << rst.value << ", (" << rst.row << ", " << rst.col << ")}";
     return os;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const Phoenix::LimitsBoundsIndexRst& rst) {
-    os << "{" << rst.code << ",[" << rst.min << "~" << rst.max << "],{" << rst.index_min.x << ","
-       << rst.index_min.y << "},{" << rst.index_max.x << "," << rst.index_max.y << "}}";
+    os << "{" << rst.code << ", [" << rst.min << " ~ " << rst.max << "], {" << rst.index_min.x
+       << ", " << rst.index_min.y << "}, {" << rst.index_max.x << ", " << rst.index_max.y << "}}";
     return os;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const Phoenix::LimitsRst& rst) {
-    os << "{" << rst.code << ",[" << rst.min << "~" << rst.max << "]}";
+    os << "{" << rst.code << ", [" << rst.min << " ~ " << rst.max << "]}";
     return os;
 }
 #endif
