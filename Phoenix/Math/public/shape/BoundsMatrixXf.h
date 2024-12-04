@@ -83,7 +83,12 @@ public:
 
     void calculate(const glm::vec2& pt, ValueIndexRst& result) const;
 
-    void fill_pattern();
+    /**
+     * @brief fill the matrix with pattern
+     *
+     * @param type 0: linear increase, 1: random, otherwise: not realized
+     */
+    void fill_pattern(int type = 0);
 
 public:
     Eigen::MatrixXf matrix; ///< Used to store measurement data

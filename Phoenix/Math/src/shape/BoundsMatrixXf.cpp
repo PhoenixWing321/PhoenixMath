@@ -90,6 +90,9 @@ bool BoundsMatrixXf::get_value(float x, float y, float& value) const {
 }
 //------------------------------------------
 void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const {
+    result.min = std::numeric_limits<float>::max();
+    result.max = std::numeric_limits<float>::lowest();
+
     // Calculate the indices for the bounding box
     int startCol = col_int(bounds.left);
     int endCol   = col_int(bounds.right);
@@ -99,15 +102,13 @@ void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const 
 
     // Ensure the indices are within the matrix bounds
     if (startCol < 0 || startRow < 0 || endCol < 0 || endRow < 0) {
-        result.min  = std::numeric_limits<float>::max();
-        result.max  = std::numeric_limits<float>::lowest();
         result.code = 1; // Indices out of bounds;
         return;
     }
 
     // Initialize min and max values
-    float minValue = std::numeric_limits<float>::max();
-    float maxValue = std::numeric_limits<float>::lowest();
+    float& minValue = result.min;
+    float& maxValue = result.max;
 
     int rows = static_cast<int>(startRow + 1);
     // Iterate over the specified region of the matrix
@@ -123,9 +124,6 @@ void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const 
         }
     }
 
-    // Store the obtained values in the result structure
-    result.min  = minValue;
-    result.max  = maxValue;
     result.code = 0; // Assume the obtained values are valid
 }
 //------------------------------------------
@@ -140,7 +138,7 @@ void BoundsMatrixXf::calculate(const glm::vec2& pos, ValueIndexRst& result) cons
 
     // check  index
     if (result.row < 0 || result.col < 0 || col >= matrix.cols() || row >= matrix.rows()) {
-        result.value = std::numeric_limits<float>::max();
+        result.value = std::numeric_limits<float>::lowest();
         result.code  = 1; // Indices out of bounds;
         return;
     }
@@ -150,10 +148,24 @@ void BoundsMatrixXf::calculate(const glm::vec2& pos, ValueIndexRst& result) cons
     result.code  = 0;
 }
 //------------------------------------------
-void BoundsMatrixXf::fill_pattern() {
-    for (int i = 0; i < matrix.rows(); ++i) {
-        for (int j = 0; j < matrix.cols(); ++j) {
-            matrix(i, j) = static_cast<float>(i + j);
+void BoundsMatrixXf::fill_pattern(int type) {
+    if (0 == type) {
+        for (int i = 0; i < matrix.rows(); ++i) {
+            for (int j = 0; j < matrix.cols(); ++j) {
+                matrix(i, j) = static_cast<float>(i + j);
+            }
+        }
+        return;
+    }
+
+    // else
+    {
+        float ratio = 1.0f / static_cast<float>(RAND_MAX);
+        for (int i = 0; i < matrix.rows(); ++i) {
+            for (int j = 0; j < matrix.cols(); ++j) {
+                // 随机数 0-1
+                matrix(i, j) = std::rand() * ratio;
+            }
         }
     }
 }
