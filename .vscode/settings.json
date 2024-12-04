@@ -1,6 +1,7 @@
 {
         "editor.formatOnSave": true,
         "files.associations": {
+                "*.json": "json",
                 "*.pri": "makefile",
                 "*.qml": "coffeescript",
                 "*.qrc": "xml",
@@ -89,6 +90,42 @@
                 "numericaldiff": "cpp",
                 "openglsupport": "cpp",
                 "specialfunctions": "cpp",
-                "splines": "cpp"
-        }
+                "splines": "cpp",
+                "xiosbase": "cpp",
+                "atomic": "cpp",
+                "bit": "cpp",
+                "chrono": "cpp",
+                "compare": "cpp",
+                "concepts": "cpp",
+                "exception": "cpp",
+                "filesystem": "cpp",
+                "format": "cpp",
+                "functional": "cpp",
+                "iterator": "cpp",
+                "numeric": "cpp",
+                "random": "cpp",
+                "ranges": "cpp",
+                "stop_token": "cpp",
+                "system_error": "cpp",
+                "thread": "cpp",
+                "type_traits": "cpp",
+                "utility": "cpp",
+                "xfacet": "cpp",
+                "xhash": "cpp",
+                "xlocale": "cpp",
+                "xlocbuf": "cpp",
+                "xlocinfo": "cpp",
+                "xlocmes": "cpp",
+                "xlocmon": "cpp",
+                "xlocnum": "cpp",
+                "xloctime": "cpp",
+                "xmemory": "cpp",
+                "xstring": "cpp",
+                "xtr1common": "cpp",
+                "xtree": "cpp",
+                "xutility": "cpp"
+        },
+        "cSpell.words": [
+                "Eigen"
+        ]
 }

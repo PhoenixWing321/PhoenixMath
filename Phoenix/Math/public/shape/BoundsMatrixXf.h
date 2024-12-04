@@ -19,12 +19,12 @@ public:
 public:
     // Number of columns in the detector (pixels)
     int cols() const {
-        return matrix.cols();
+        return static_cast<int>(matrix.cols());
     };
 
     // Number of rows in the detector (pixels)
     int rows() const {
-        return matrix.rows();
+        return static_cast<int>(matrix.rows());
     };
 
     /**
@@ -75,7 +75,7 @@ public:
      * @param x x-coordinate
      * @param y y-coordinate
      * @return float, if x or y are outside the valid range,
-     *  return the boudary value
+     *  return the boundary value
      */
     float get_value(float x, float y) const;
 
@@ -83,7 +83,12 @@ public:
 
     void calculate(const glm::vec2& pt, ValueIndexRst& result) const;
 
-    void fill_pattern();
+    /**
+     * @brief fill the matrix with pattern
+     *
+     * @param type 0: linear increase, 1: random, otherwise: not realized
+     */
+    void fill_pattern(int type = 0);
 
 public:
     Eigen::MatrixXf matrix; ///< Used to store measurement data
