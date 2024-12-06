@@ -4,6 +4,9 @@
 
 #include "../inside.hpp"
 
+// command for detail
+// ./test_Bounds2f --success -r compact
+
 TEST_CASE("Bounds2f expand", "[Bounds2f]") {
     SECTION("Basic case") {
         Phoenix::Bounds2f bounds(glm::vec2(0.0f, 0.0f), glm::vec2(5.0f, 5.0f));

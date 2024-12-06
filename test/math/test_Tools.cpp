@@ -7,6 +7,8 @@
 
 using namespace Phoenix;
 
+// command for detail
+// ./test_Tools --success -r compact
 //------------------------------------------------
 int test_build(const std::string& startPath) {
     std::cout << "[trace] startPath   :" << startPath << std::endl;

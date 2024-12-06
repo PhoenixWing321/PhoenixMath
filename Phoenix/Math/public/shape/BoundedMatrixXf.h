@@ -1,5 +1,5 @@
-#ifndef PHOENIX_BoundsMatrixXf_H
-#define PHOENIX_BoundsMatrixXf_H
+#ifndef PHOENIX_BoundedMatrixXf_H
+#define PHOENIX_BoundedMatrixXf_H
 
 #include "glm/glm.hpp"
 #include "shape/Bounds2f.hpp"
@@ -9,24 +9,29 @@
 
 namespace Phoenix {
 
-class BoundsMatrixXf : public Bounds2f {
+using RowMatrixXf = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+class BoundedMatrixXf : public RowMatrixXf {
 public:
-    // Constructor
-    BoundsMatrixXf(int rows, int cols, const Bounds2f& bounds); // Constructor
-    BoundsMatrixXf(int rows, int cols, float left, float bottom, float right, float top);
-    virtual ~BoundsMatrixXf() = default;
+    BoundedMatrixXf()
+        : RowMatrixXf(0, 0)
+        , bounds{} {}
+
+    BoundedMatrixXf(size_t rows, size_t cols)
+        : RowMatrixXf(rows, cols)
+        , bounds{} {}
+    // constructor
+    BoundedMatrixXf(size_t rows, size_t cols, const Bounds2f& bounds)
+        : RowMatrixXf(rows, cols)
+        , bounds(bounds) {
+        // do not initialize matrix
+    }
+
+    BoundedMatrixXf(int rows, int cols, float left, float bottom, float right, float top);
+
+    ~BoundedMatrixXf() = default;
 
 public:
-    // Number of columns in the detector (pixels)
-    int cols() const {
-        return static_cast<int>(matrix.cols());
-    };
-
-    // Number of rows in the detector (pixels)
-    int rows() const {
-        return static_cast<int>(matrix.rows());
-    };
-
     /**
      * @brief get the column index from x coordinate
      *
@@ -42,7 +47,7 @@ public:
      * @return double, do not modify the index
      */
     inline double col_double(double x) const {
-        return (x - left) / (right - left) * matrix.cols();
+        return (x - bounds.left) / (bounds.right - bounds.left) * cols();
     };
 
     /**
@@ -60,7 +65,7 @@ public:
      * @return double, do not modify the index
      */
     inline double row_double(double y) const {
-        return (y - bottom) / (top - bottom) * matrix.rows();
+        return (y - bounds.bottom) / (bounds.top - bounds.bottom) * rows();
     }
 
     bool inside(float x, float y) const;
@@ -91,8 +96,7 @@ public:
     void fill_pattern(int type = 0);
 
 public:
-    Eigen::MatrixXf matrix; ///< Used to store measurement data
+    Bounds2f bounds; // 2d bounds
 };
 } // namespace Phoenix
-
 #endif
