@@ -2,9 +2,18 @@
 project("phoenix_root" VERSION 1.0.0)
 
 # 3rdParty======================
-set(ROOT_3rdParty ${CMAKE_CURRENT_SOURCE_DIR}/../Phoenix3rdParty)
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
 
-add_subdirectory(Phoenix/Math)
+include(read_config.cmake)
+
+# print config
+message(STATUS "Config loaded:")
+message(STATUS "  ROOT_DIR_3rdParty: ${ROOT_DIR_3rdParty}") 
+
+
+add_subdirectory(Phoenix)
 
 # test 
 enable_testing()

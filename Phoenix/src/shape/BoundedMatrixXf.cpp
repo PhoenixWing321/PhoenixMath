@@ -1,22 +1,17 @@
-#include "shape/BoundsMatrixXf.h"
+#include "shape/BoundedMatrixXf.h"
 
 namespace Phoenix {
 
 //------------------------------------------
-BoundsMatrixXf::BoundsMatrixXf(int rows, int cols, const Bounds2f& bounds)
-    : Bounds2f{bounds}
-    , matrix(rows, cols) {
+BoundedMatrixXf::BoundedMatrixXf(int rows, int cols, float left, float bottom, float right,
+                                 float top)
+    : RowMatrixXf(rows, cols)
+    , bounds{left, bottom, right, top} {
     // empty
 }
 //------------------------------------------
-BoundsMatrixXf::BoundsMatrixXf(int rows, int cols, float left, float bottom, float right, float top)
-    : Bounds2f{left, bottom, right, top}
-    , matrix(rows, cols) {
-    // empty
-}
-//------------------------------------------
-int BoundsMatrixXf::col_int(double x) const {
-    const int count = static_cast<int>(matrix.cols());
+int BoundedMatrixXf::col_int(double x) const {
+    const int count = static_cast<int>(cols());
     if (count == 0) return -1;
 
     // here use x/left/right to calculate the index (double ratio)
@@ -28,9 +23,9 @@ int BoundsMatrixXf::col_int(double x) const {
     return index;
 }
 //------------------------------------------
-int BoundsMatrixXf::row_int(double y) const {
+int BoundedMatrixXf::row_int(double y) const {
     // get row form y if outside the bounds, return -1
-    const int count = static_cast<int>(matrix.rows());
+    const int count = static_cast<int>(rows());
     if (count == 0) return -1;
 
     // here use y/bottom/top to calculate the index (double ratio)
@@ -42,11 +37,11 @@ int BoundsMatrixXf::row_int(double y) const {
     return index;
 }
 //------------------------------------------
-bool BoundsMatrixXf::inside(float x, float y) const {
-    return x >= left && x < right && y >= bottom && y < top;
+bool BoundedMatrixXf::inside(float x, float y) const {
+    return x >= bounds.left && x < bounds.right && y >= bounds.bottom && y < bounds.top;
 }
 //------------------------------------------
-bool BoundsMatrixXf::interpolate(float x, float y, float& value) const {
+bool BoundedMatrixXf::interpolate(float x, float y, float& value) const {
     // Check if the given x and y coordinates are within the valid range
     if (!inside(x, y)) {
         return false; // Coordinates are outside the valid range
@@ -57,25 +52,25 @@ bool BoundsMatrixXf::interpolate(float x, float y, float& value) const {
 
     // Perform interpolation here
     // For simplicity, let's assume nearest neighbor interpolation
-    value = matrix(row, col);
+    value = coeff(row, col);
     return true;
 }
 //------------------------------------------
-float BoundsMatrixXf::get_value(float x, float y) const {
+float BoundedMatrixXf::get_value(float x, float y) const {
     int row = row_int(y);
     int col = col_int(x);
     if (row < 0)
         row = 0;
-    else if (row >= matrix.rows())
-        row = static_cast<int>(matrix.rows()) - 1;
+    else if (row >= rows())
+        row = static_cast<int>(rows()) - 1;
     if (col < 0)
         col = 0;
-    else if (col >= matrix.cols())
-        col = static_cast<int>(matrix.cols()) - 1;
-    return matrix(row, col);
+    else if (col >= cols())
+        col = static_cast<int>(cols()) - 1;
+    return coeff(row, col);
 }
 //------------------------------------------
-bool BoundsMatrixXf::get_value(float x, float y, float& value) const {
+bool BoundedMatrixXf::get_value(float x, float y, float& value) const {
     // left/right is the outer boundary of the rectangular area
     // bottom/top is the outer boundary of the rectangular area
     // so inside has rows and cols blocks inside the rectangular area
@@ -85,11 +80,11 @@ bool BoundsMatrixXf::get_value(float x, float y, float& value) const {
 
     int row = row_int(y);
     int col = col_int(x);
-    value   = matrix(row, col);
+    value   = coeff(row, col);
     return true;
 }
 //------------------------------------------
-void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const {
+void BoundedMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const {
     result.min = std::numeric_limits<float>::max();
     result.max = std::numeric_limits<float>::lowest();
 
@@ -114,7 +109,7 @@ void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const 
     // Iterate over the specified region of the matrix
     for (int y = startRow; y <= endRow; ++y) {
         for (int x = startCol; x <= endCol; ++x) {
-            float value = matrix(y, x);
+            float value = coeff(y, x);
             if (value < minValue) {
                 minValue = value;
             }
@@ -127,7 +122,7 @@ void BoundsMatrixXf::calculate(const Bounds2f& bounds, LimitsRst& result) const 
     result.code = 0; // Assume the obtained values are valid
 }
 //------------------------------------------
-void BoundsMatrixXf::calculate(const glm::vec2& pos, ValueIndexRst& result) const {
+void BoundedMatrixXf::calculate(const glm::vec2& pos, ValueIndexRst& result) const {
     // Calculate the indices for the bounding box
     result.row = row_double(pos.y);
     result.col = col_double(pos.x);
@@ -137,22 +132,22 @@ void BoundsMatrixXf::calculate(const glm::vec2& pos, ValueIndexRst& result) cons
     int row = static_cast<int>(result.row);
 
     // check  index
-    if (result.row < 0 || result.col < 0 || col >= matrix.cols() || row >= matrix.rows()) {
+    if (result.row < 0 || result.col < 0 || col >= cols() || row >= rows()) {
         result.value = std::numeric_limits<float>::lowest();
         result.code  = 1; // Indices out of bounds;
         return;
     }
 
     // Store the obtained values in the result structure
-    result.value = matrix(row, col);
+    result.value = coeff(row, col);
     result.code  = 0;
 }
 //------------------------------------------
-void BoundsMatrixXf::fill_pattern(int type) {
+void BoundedMatrixXf::fill_pattern(int type) {
     if (0 == type) {
-        for (int i = 0; i < matrix.rows(); ++i) {
-            for (int j = 0; j < matrix.cols(); ++j) {
-                matrix(i, j) = static_cast<float>(i + j);
+        for (int i = 0; i < rows(); ++i) {
+            for (int j = 0; j < cols(); ++j) {
+                coeffRef(i, j) = static_cast<float>(i + j);
             }
         }
         return;
@@ -161,10 +156,10 @@ void BoundsMatrixXf::fill_pattern(int type) {
     // else
     {
         float ratio = 1.0f / static_cast<float>(RAND_MAX);
-        for (int i = 0; i < matrix.rows(); ++i) {
-            for (int j = 0; j < matrix.cols(); ++j) {
+        for (int i = 0; i < rows(); ++i) {
+            for (int j = 0; j < cols(); ++j) {
                 // 随机数 0-1
-                matrix(i, j) = std::rand() * ratio;
+                coeffRef(i, j) = std::rand() * ratio;
             }
         }
     }

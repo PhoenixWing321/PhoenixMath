@@ -1,49 +1,52 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
-#include "shape/BoundsMatrixXf.h"
+#include "shape/BoundedMatrixXf.h"
 
 #include "../inside.hpp"
+
+// command for detail
+// ./test_BoundedMatrixXf --success -r compact
 
 // REQUIRE(2.1 ==  Approx(2.1));//  Approx(2.1) =>2.1_a
 using namespace Catch::literals; // for 1.0_a
 
-TEST_CASE("BoundsMatrixXf Constructor", "[BoundsMatrixXf]") {
+TEST_CASE("BoundedMatrixXf Constructor", "[matrix]") {
     SECTION("Normal case") {
-        Phoenix::Bounds2f       bounds(0.f, 0.f, 100.f, 50.f);
-        Phoenix::BoundsMatrixXf area(20, 10, bounds);
+        Phoenix::Bounds2f        bounds(0.f, 0.f, 100.f, 50.f);
+        Phoenix::BoundedMatrixXf area(20, 10, bounds);
         REQUIRE(area.rows() == 20);
         REQUIRE(area.cols() == 10);
-        REQUIRE(area.left == 0.f);
-        REQUIRE(area.bottom == 0.f);
-        REQUIRE(area.right == bounds.right);
-        REQUIRE(area.top == bounds.top);
+        REQUIRE(area.bounds.left == 0.f);
+        REQUIRE(area.bounds.bottom == 0.f);
+        REQUIRE(area.bounds.right == bounds.right);
+        REQUIRE(area.bounds.top == bounds.top);
     }
 
     SECTION("Boundary case") {
-        Phoenix::Bounds2f       bounds(-10.f, -10.f, 10.f, 10.f);
-        Phoenix::BoundsMatrixXf area(2, 3, -10.f, -10.f, 10.f, 10.f);
-        Phoenix::Bounds2f       bounds1 = area;
+        Phoenix::Bounds2f        bounds(-10.f, -10.f, 10.f, 10.f);
+        Phoenix::BoundedMatrixXf area(2, 3, -10.f, -10.f, 10.f, 10.f);
+        Phoenix::Bounds2f        bounds1 = area.bounds;
         REQUIRE(area.rows() == 2);
         REQUIRE(area.cols() == 3);
-        REQUIRE(area.left == -10.f);
-        REQUIRE(area.bottom == -10.f);
-        REQUIRE(area.right == 10.f);
-        REQUIRE(area.top == 10.f);
+        REQUIRE(area.bounds.left == -10.f);
+        REQUIRE(area.bounds.bottom == -10.f);
+        REQUIRE(area.bounds.right == 10.f);
+        REQUIRE(area.bounds.top == 10.f);
         REQUIRE(bounds1 == bounds);
     }
 }
 
-TEST_CASE("BoundsMatrixXf::fill_pattern", "[BoundsMatrixXf]") {
-    Phoenix::BoundsMatrixXf area(5, 10, 0.f, 0.f, 100.f, 50.f);
+TEST_CASE("BoundedMatrixXf::fill_pattern", "[matrix]") {
+    Phoenix::BoundedMatrixXf area(5, 10, 0.f, 0.f, 100.f, 50.f);
     area.fill_pattern();
 
     SECTION("check (i,j) function to touch the matrix") {
-        auto& matrix = area.matrix;
+        auto& matrix = area;
         cout << " Bounds Matrix:" << endl;
         cout << "Bounds : " << (Phoenix::Bounds2f&)area << endl;
-        cout << "x segment = " << (area.right - area.left) / area.cols()
+        cout << "x segment = " << (area.bounds.right - area.bounds.left) / area.cols()
              << ", cols = " << matrix.cols() << endl;
-        cout << "y segment = " << (area.top - area.bottom) / area.rows()
+        cout << "y segment = " << (area.bounds.top - area.bounds.bottom) / area.rows()
              << ", rows = " << matrix.rows() << endl;
         std::cout << matrix << std::endl;
 
@@ -64,8 +67,8 @@ TEST_CASE("BoundsMatrixXf::fill_pattern", "[BoundsMatrixXf]") {
     }
 }
 
-TEST_CASE("BoundsMatrixXf::calculate with glm::vec2", "[BoundsMatrixXf]") {
-    Phoenix::BoundsMatrixXf area(5, 10, 0.f, 0.f, 50.f, 100.f);
+TEST_CASE("BoundedMatrixXf::calculate with glm::vec2", "[matrix]") {
+    Phoenix::BoundedMatrixXf area(5, 10, 0.f, 0.f, 50.f, 100.f);
     area.fill_pattern();
 
     SECTION("Point inside bounds") {
@@ -88,7 +91,7 @@ TEST_CASE("BoundsMatrixXf::calculate with glm::vec2", "[BoundsMatrixXf]") {
         area.calculate(pt, rst);
         cout << "Point outside bounds: {code,value,row,col} = " << rst << endl;
         REQUIRE(rst.code != 0); // Calculation failed
-        REQUIRE(rst.value == Approx(3.40282e+38));
+        REQUIRE(rst.value == std::numeric_limits<float>::lowest());
         REQUIRE(rst.row == Approx(10.25)); // [0,5)
         REQUIRE(rst.col == 21_a);          // [0,10)
     }
@@ -105,8 +108,8 @@ TEST_CASE("BoundsMatrixXf::calculate with glm::vec2", "[BoundsMatrixXf]") {
     }
 }
 
-TEST_CASE("BoundsMatrixXf::calculate with specific bounds", "[BoundsMatrixXf]") {
-    Phoenix::BoundsMatrixXf area(5, 10, {0.f, 0.f, 100.f, 50.f});
+TEST_CASE("BoundedMatrixXf::calculate with specific bounds", "[matrix]") {
+    Phoenix::BoundedMatrixXf area(5, 10, {0.f, 0.f, 100.f, 50.f});
     area.fill_pattern();
 
     SECTION("Bounds inside bounds") {
@@ -125,9 +128,9 @@ TEST_CASE("BoundsMatrixXf::calculate with specific bounds", "[BoundsMatrixXf]") 
         Phoenix::LimitsRst rst;
         area.calculate(bounds, rst);
         cout << "Bounds outside bounds: {code,min,max} = " << rst << endl;
-        REQUIRE(rst.code != 0); // Calculation failed
-        REQUIRE(rst.min == Approx(3.40282e+38));
-        REQUIRE(rst.max == Approx(-3.40282e+38));
+        REQUIRE(rst.code != 0);
+        REQUIRE(rst.min == std::numeric_limits<float>::max());    // Approx(3.40282e+38)
+        REQUIRE(rst.max == std::numeric_limits<float>::lowest()); // Approx(-3.40282e+38)
     }
 
     SECTION("Bounds on boundary") {
