@@ -1,4 +1,4 @@
-﻿include(../../common.cmake)
+﻿include(../common.cmake)
 project("PhoenixMath" VERSION 1.0.0)
 message(">>============START phoenix/" ${PROJECT_NAME} " ===================")
 
