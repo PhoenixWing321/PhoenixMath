@@ -19,3 +19,12 @@ workspace
    ├──...
 ```
 
+# config
+## config in windows
+- copy `my.config.bak` to `my.config`
+- modify `my.config`, set your own path
+- run bldAll.ps1
+- run export.ps1
+
+## config in mac os
+- to be done

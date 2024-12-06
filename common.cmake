@@ -10,5 +10,5 @@ if(MSVC)
 endif()
 
 # 包含的目录
-include_directories(${ROOT_3rdParty} 
-${ROOT_3rdParty}/glm)
+include_directories(${ROOT_DIR_3rdParty} 
+${ROOT_DIR_3rdParty}/glm)
