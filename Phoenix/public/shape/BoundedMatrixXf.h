@@ -3,13 +3,12 @@
 
 #include "glm/glm.hpp"
 #include "shape/Bounds2f.hpp"
+#include "shape/EigenDefine.hpp"
 #include "utility/Code.hpp"
 #include "utility/Result.hpp"
 #include <Eigen/Dense>
 
 namespace Phoenix {
-
-using RowMatrixXf = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 class BoundedMatrixXf : public RowMatrixXf {
 public:

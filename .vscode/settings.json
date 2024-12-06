@@ -125,7 +125,8 @@
                 "xtree": "cpp",
                 "xutility": "cpp",
                 "dense": "cpp",
-                "eigenvalues": "cpp"
+                "eigenvalues": "cpp",
+                "tensor": "cpp"
         },
         "cSpell.words": [
                 "Eigen"
