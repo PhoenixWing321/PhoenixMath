@@ -1,5 +1,6 @@
 #include "shape/NonUniformMatrixXf.h"
-#include <iostream>
+#include <fstream>
+
 namespace Phoenix {
 
 void NonUniformMatrixXf::fill_pattern() {
@@ -22,4 +23,80 @@ void NonUniformMatrixXf::fill_pattern() {
         8.5f, 9.2f, 11.0f, 14.0f, 17.0f, 18.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f,   // 4
         12.0f, 13.0f, 15.0f, 16.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f, 20.0f, 20.0f; // 5
 }
+
+int NonUniformMatrixXf::read(const std::string& path) {
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        return FILE_NOT_OPEN;
+    }
+
+    // Read dimensions
+    int rows, cols;
+    file >> rows >> cols;
+
+    // Validate dimensions
+    if (rows <= 0 || cols <= 0) {
+        return INVALID_DIMENSIONS;
+    }
+
+    // Resize containers
+    this->resize(rows, cols);
+    x_coords.resize(cols);
+    y_coords.resize(rows);
+
+    // Read x coordinates (column coordinates)
+    for (int j = 0; j < cols; ++j) {
+        file >> x_coords(j);
+    }
+
+    // Read y coordinates (row coordinates) and matrix values
+    for (int i = 0; i < rows; ++i) {
+        file >> y_coords(i);
+        for (int j = 0; j < cols; ++j) {
+            file >> (*this)(i, j);
+        }
+    }
+
+    return file.good() ? SUCCESS : READ_ERROR;
+}
+
+int NonUniformMatrixXf::save(const std::string& path) const {
+    std::ofstream file(path);
+    if (!file.is_open()) {
+        return FILE_NOT_OPEN;
+    }
+
+    // Save original format settings
+    auto old_flags     = file.flags();
+    auto old_precision = file.precision();
+
+    // Set output format
+    file << std::fixed << std::setprecision(1);
+
+    // Write dimensions
+    file << rows() << "\t" << cols() << "\n";
+
+    // Write x coordinates (column coordinates)
+    file << "\t";
+    for (int j = 0; j < cols(); ++j) {
+        file << std::setw(5) << x_coords(j);
+    }
+    file << "\n";
+
+    // Write y coordinates (row coordinates) and matrix values
+    for (int i = 0; i < rows(); ++i) {
+        file << std::setw(3) << y_coords(i) << "\t";
+        for (int j = 0; j < cols(); ++j) {
+            file << std::setw(5) << (*this)(i, j);
+        }
+        file << "\n";
+    }
+
+    // Restore original format settings
+    file.flags(old_flags);
+    file.precision(old_precision);
+
+    return file.good() ? SUCCESS : WRITE_ERROR;
+}
+
 } // namespace Phoenix

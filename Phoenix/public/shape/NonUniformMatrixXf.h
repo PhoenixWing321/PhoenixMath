@@ -10,6 +10,15 @@ namespace Phoenix {
 
 class NonUniformMatrixXf : public RowMatrixXf {
 public:
+    // Error codes
+    enum ErrorCode {
+        SUCCESS            = 0,
+        FILE_NOT_OPEN      = 1,
+        INVALID_DIMENSIONS = 2,
+        READ_ERROR         = 3,
+        WRITE_ERROR        = 4
+    };
+
     NonUniformMatrixXf()
         : RowMatrixXf(0, 0)
         , x_coords(0)
@@ -21,6 +30,10 @@ public:
     void fill_pattern();
 
     friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
+
+    int read(const std::string& path);
+
+    int save(const std::string& path) const;
 
 public:
     Eigen::VectorXf y_coords; // row coordinates of center, V- direction

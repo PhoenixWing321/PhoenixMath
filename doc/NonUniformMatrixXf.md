@@ -1,18 +1,26 @@
 非等宽矩阵@非等宽矩阵.matrix 
 
 数据：
- - 数据类型: std::vector<float>  row_coords;
+## 成员变量
+- Eigen::VectorXf x_coords;行坐标 
+- Eigen::VectorXf y_coords; 列坐标
+ 
+
+### 数据格式
 第1行为行列数，例如 rows = 17,cols = 111
 第2行为列的坐标数组
 长度为cols
-数据类型: 单元格中心坐标
- std::vector<float>  col_coords;
+数据类型: 单元格中心坐标 
 - 第3行开始为行数据
     - 行数为rows
     - 行的第1个数据为单元格中心坐标
     - 行的第2个数据开始为一行的数据，共cols个数据
 
-## 示例
+## 函数 
+### fill_pattern
+填充样例数据
+
+- 示例
 ```
 6	11	
     0   2   4   10  20  40  60  80  85  88  90
@@ -23,3 +31,19 @@
 30  8.5 9.2 11  14  17  18  18  19  19  20  20
 45  12  13  15  16  18  19  19  20  20  20  20
 ```
+
+## cout
+` std::ostream& operator<<()`
+打印出类似于样例的格式
+
+## save
+save(path)
+- 传入path
+- 保持到文件
+
+## read
+read(path)
+- 读入文件
+- 放到数据结构内
+
+
