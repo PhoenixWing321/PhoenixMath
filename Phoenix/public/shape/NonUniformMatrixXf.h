@@ -3,7 +3,7 @@
 
 #include "shape/EigenDefine.hpp"
 #include <Eigen/Dense>
-#include <iomanip> // 为 std::setw 和 std::setprecision
+#include <iomanip> // For std::setw and std::setprecision
 #include <iostream>
 
 namespace Phoenix {
@@ -26,48 +26,48 @@ public:
 
     ~NonUniformMatrixXf() = default;
 
-    // fill data
+    // Fill with sample data
     void fill_pattern();
 
     friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
 
     int read(const std::string& path);
-
+    int read(std::ifstream& file);
     int save(const std::string& path) const;
 
 public:
-    Eigen::VectorXf y_coords; // row coordinates of center, V- direction
-    Eigen::VectorXf x_coords; // column coordinates of center, U- direction
+    Eigen::VectorXf y_coords; // Row coordinates of center, V-direction
+    Eigen::VectorXf x_coords; // Column coordinates of center, U-direction
 };
 
 inline std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix) {
-    // 保存原始格式
+    // Save original format settings
     auto old_flags     = os.flags();
     auto old_precision = os.precision();
 
-    // 设置新格式：固定宽度，右对齐，保留1位小数
+    // Set new format: fixed width, right-aligned, 1 decimal place
     os << std::fixed << std::setprecision(1);
 
-    // 输出维度
+    // Output dimensions
     os << matrix.rows() << "\t" << matrix.cols() << "\n";
 
-    // 输出x坐标行
-    os << "\t";
+    // Output x coordinates row
+    os << "  y \\x\t";
     for (int j = 0; j < matrix.cols(); ++j) {
         os << std::setw(5) << matrix.x_coords(j);
     }
     os << "\n";
 
-    // 输出y坐标和值矩阵
+    // Output y coordinates and matrix values
     for (int i = 0; i < matrix.rows(); ++i) {
-        os << std::setw(3) << matrix.y_coords(i) << "\t";
+        os << std::setw(5) << matrix.y_coords(i) << "\t";
         for (int j = 0; j < matrix.cols(); ++j) {
             os << std::setw(5) << matrix(i, j);
         }
         os << "\n";
     }
 
-    // 恢复原始格式
+    // Restore original format settings
     os.flags(old_flags);
     os.precision(old_precision);
 
