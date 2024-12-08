@@ -16,7 +16,13 @@ public:
         FILE_NOT_OPEN      = 1,
         INVALID_DIMENSIONS = 2,
         READ_ERROR         = 3,
-        WRITE_ERROR        = 4
+        WRITE_ERROR        = 4,
+        INVALID_FORMAT     = 5
+    };
+
+    enum Format {
+        FORMAT_0 = 0, // default row-major format
+        FORMAT_1 = 1  // a kind of column-major format
     };
 
     NonUniformMatrixXf()
@@ -36,28 +42,28 @@ public:
      * @param path File path
      * @return int Error code
      */
-    int load(const std::string& path);
+    int load(const std::string& path, Format format = FORMAT_0);
 
     /**
      * @brief Load from stringstream
      * @param stream stringstream object to load from
      * @return int Error code
      */
-    int load(std::stringstream& stream);
+    int load(std::stringstream& stream, Format format = FORMAT_0);
 
     /**
      * @brief Save to file
      * @param path File path
      * @return int Error code
      */
-    int save(const std::string& path) const;
+    int save(const std::string& path, Format format = FORMAT_0) const;
 
     /**
      * @brief Save to stringstream
      * @param stream stringstream object to save to
      * @return int Error code
      */
-    int save(std::stringstream& stream) const;
+    int save(std::stringstream& stream, Format format = FORMAT_0) const;
 
 public:
     Eigen::VectorXf y_coords; // Row coordinates of center, V-direction

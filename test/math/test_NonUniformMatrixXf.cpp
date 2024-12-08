@@ -77,13 +77,20 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
 
     SECTION("Save and load success") {
         // Save to temporary file
-        const std::string temp_file = "NonUniformMatrixXf.txt";
-        std::cout << "temp_file: " << fs::absolute(temp_file).string() << std::endl;
-        REQUIRE(matrix1.save(temp_file) == NonUniformMatrixXf::SUCCESS);
+        const std::string temp_file_format_0 = "NonUniformMatrixXf_format_0.txt";
+        std::cout << "temp_file: " << fs::absolute(temp_file_format_0).string() << std::endl;
+        REQUIRE(matrix1.save(temp_file_format_0, NonUniformMatrixXf::FORMAT_0) ==
+                NonUniformMatrixXf::SUCCESS);
+
+        const std::string temp_file_format_1 = "NonUniformMatrixXf_format_1.txt";
+        std::cout << "temp_file: " << fs::absolute(temp_file_format_1).string() << std::endl;
+        REQUIRE(matrix1.save(temp_file_format_1, NonUniformMatrixXf::FORMAT_1) ==
+                NonUniformMatrixXf::SUCCESS);
 
         // load into new matrix
         NonUniformMatrixXf matrix2;
-        REQUIRE(matrix2.load(temp_file) == NonUniformMatrixXf::SUCCESS);
+        REQUIRE(matrix2.load(temp_file_format_0, NonUniformMatrixXf::FORMAT_0) ==
+                NonUniformMatrixXf::SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());

@@ -25,7 +25,7 @@ void NonUniformMatrixXf::fill_pattern() {
         12.0f, 13.0f, 15.0f, 16.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f, 20.0f, 20.0f; // Row 5
 }
 //------------------------------------------------------
-int NonUniformMatrixXf::load(const std::string& path) {
+int NonUniformMatrixXf::load(const std::string& path, Format format) {
     std::ifstream file(path);
     if (!file.is_open()) {
         return FILE_NOT_OPEN;
@@ -35,10 +35,10 @@ int NonUniformMatrixXf::load(const std::string& path) {
     std::stringstream buffer;
     buffer << file.rdbuf();
 
-    return load(buffer);
+    return load(buffer, format);
 }
 //------------------------------------------------------
-int NonUniformMatrixXf::load(std::stringstream& buffer) {
+int NonUniformMatrixXf::load(std::stringstream& buffer, Format format) {
     this->resize(0, 0);
     if (!buffer.good()) {
         return READ_ERROR;
@@ -74,10 +74,10 @@ int NonUniformMatrixXf::load(std::stringstream& buffer) {
     return buffer.good() ? SUCCESS : READ_ERROR;
 }
 //------------------------------------------------------
-int NonUniformMatrixXf::save(const std::string& path) const {
+int NonUniformMatrixXf::save(const std::string& path, Format format) const {
     // DO NOT set output format
     std::stringstream stream;
-    auto              code = save(stream);
+    auto              code = save(stream, format);
     if (code != SUCCESS) return code;
 
     std::ofstream file(path);
@@ -88,26 +88,73 @@ int NonUniformMatrixXf::save(const std::string& path) const {
     return file.good() ? SUCCESS : WRITE_ERROR;
 }
 //------------------------------------------------------
-int NonUniformMatrixXf::save(std::stringstream& stream) const {
+int NonUniformMatrixXf::save(std::stringstream& stream, Format format) const {
     if (!stream.good()) return WRITE_ERROR;
     // DO NOT set output format
+
+    // check dimensions: x<==>cols, y<==>rows
+    if (y_coords.size() != rows() || x_coords.size() != cols()) {
+        return INVALID_DIMENSIONS;
+    }
 
     // Write dimensions
     stream << rows() << "\t" << cols() << "\n";
 
-    // Write x coordinates (column coordinates)
-    for (int j = 0; j < cols(); ++j) {
-        stream << "\t" << x_coords(j);
-    }
-    stream << "\n";
-
-    // Write y coordinates (row coordinates) and matrix values
-    for (int i = 0; i < rows(); ++i) {
-        stream << y_coords(i);
-        for (int j = 0; j < cols(); ++j) {
-            stream << "\t" << (*this)(i, j);
+    switch (format) {
+    case FORMAT_0: {
+        // Write x coordinates (column coordinates)
+        for (int x = 0; x < x_coords.size(); ++x) {
+            stream << "\t" << x_coords(x);
         }
         stream << "\n";
+
+        // Write y coordinates (row coordinates) and matrix values
+        for (int y = 0; y < y_coords.size(); ++y) {
+            stream << y_coords(y);
+            for (int x = 0; x < x_coords.size(); ++x) {
+                stream << "\t" << coeff(y, x);
+            }
+            stream << "\n";
+        }
+    } break;
+    case FORMAT_1: {
+        const int    break_count = 8;
+        const size_t last_y      = y_coords.size() - 1;
+        const size_t last_x      = x_coords.size() - 1;
+
+        // 01. Write y coordinates (column coordinates)
+        for (size_t y = 0; y <= last_y; ++y) {
+            stream << y_coords(y);
+            if ((y + 1) % break_count == 0 || y == last_y)
+                stream << "\n";
+            else
+                stream << "\t";
+        }
+
+        // 02. Write x coordinates (row coordinates)
+        for (size_t x = 0; x <= last_x; ++x) {
+            stream << x_coords(x);
+            if ((x + 1) % break_count == 0 || x == last_x)
+                stream << "\n";
+            else
+                stream << "\t";
+        }
+
+        // 03. Write matrix values: column-major
+        for (int x = 0; x < x_coords.size(); ++x) {
+            for (int y = 0; y < y_coords.size(); ++y) {
+                stream << coeff(y, x);
+                if ((y + 1) % break_count == 0 || y == last_y)
+                    stream << "\n";
+                else
+                    stream << "\t";
+            }
+            stream << "\n";
+        }
+
+    } break;
+    default:
+        return INVALID_FORMAT;
     }
 
     return stream.good() ? SUCCESS : WRITE_ERROR;
