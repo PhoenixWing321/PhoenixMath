@@ -1,5 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
+#include "loader/MatrixLoader.h"
 #include "shape/NonUniformMatrixXf.h"
 
 #include "../inside.hpp"
@@ -76,21 +77,22 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
+        MatrixLoader loader;
         // Save to temporary file
         const std::string temp_file_format_0 = "NonUniformMatrixXf_format_0.txt";
         std::cout << "temp_file: " << fs::absolute(temp_file_format_0).string() << std::endl;
-        REQUIRE(matrix1.save(temp_file_format_0, NonUniformMatrixXf::FORMAT_0) ==
-                NonUniformMatrixXf::SUCCESS);
+        REQUIRE(loader.save(matrix1, temp_file_format_0, MatrixLoader::FORMAT_ROW_DEFAULT) ==
+                MatrixLoader::SUCCESS);
 
         const std::string temp_file_format_1 = "NonUniformMatrixXf_format_1.txt";
         std::cout << "temp_file: " << fs::absolute(temp_file_format_1).string() << std::endl;
-        REQUIRE(matrix1.save(temp_file_format_1, NonUniformMatrixXf::FORMAT_1) ==
-                NonUniformMatrixXf::SUCCESS);
+        REQUIRE(loader.save(matrix1, temp_file_format_1, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                MatrixLoader::SUCCESS);
 
         // load into new matrix
         NonUniformMatrixXf matrix2;
-        REQUIRE(matrix2.load(temp_file_format_0, NonUniformMatrixXf::FORMAT_0) ==
-                NonUniformMatrixXf::SUCCESS);
+        REQUIRE(loader.load(matrix2, temp_file_format_0, MatrixLoader::FORMAT_ROW_DEFAULT) ==
+                MatrixLoader::SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());
@@ -119,17 +121,18 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
 
     SECTION("File operation errors") {
         NonUniformMatrixXf matrix;
+        MatrixLoader       loader;
 
         // Test FILE_NOT_OPEN error
-        CHECK(matrix.load("non_existent_file.txt") == NonUniformMatrixXf::FILE_NOT_OPEN);
-        CHECK(matrix1.save("/invalid/path/file.txt") == NonUniformMatrixXf::FILE_NOT_OPEN);
+        CHECK(loader.load(matrix, "non_existent_file.txt") == MatrixLoader::FILE_NOT_OPEN);
+        CHECK(loader.save(matrix1, "/invalid/path/file.txt") == MatrixLoader::FILE_NOT_OPEN);
 
         // Test INVALID_DIMENSIONS error
         {
             std::ofstream bad_file("bad_dimensions.txt");
             bad_file << "-1\t-1\n";
             bad_file.close();
-            CHECK(matrix.load("bad_dimensions.txt") == NonUniformMatrixXf::INVALID_DIMENSIONS);
+            CHECK(loader.load(matrix, "bad_dimensions.txt") == MatrixLoader::INVALID_DIMENSIONS);
             std::remove("bad_dimensions.txt");
         }
 
@@ -138,13 +141,13 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
             std::ofstream bad_file("corrupted.txt");
             bad_file << "6\t11\nnotanumber";
             bad_file.close();
-            CHECK(matrix.load("corrupted.txt") == NonUniformMatrixXf::READ_ERROR);
+            CHECK(loader.load(matrix, "corrupted.txt") == MatrixLoader::READ_ERROR);
             std::remove("corrupted.txt");
         }
     }
 }
 
-TEST_CASE("NonUniformMatrixXf output format", "[NonUniformMatrixXf]") {
+TEST_CASE("NonUniformMatrixXf output format", "[matrix]") {
     NonUniformMatrixXf matrix;
     matrix.fill_pattern();
 

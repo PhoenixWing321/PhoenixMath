@@ -2,7 +2,6 @@
 #define PHOENIX_NonUniformMatrixXf_H
 
 #include "shape/EigenDefine.hpp"
-#include <Eigen/Dense>
 #include <iomanip> // For std::setw and std::setprecision
 #include <iostream>
 
@@ -10,21 +9,6 @@ namespace Phoenix {
 
 class NonUniformMatrixXf : public RowMatrixXf {
 public:
-    // Error codes
-    enum ErrorCode {
-        SUCCESS            = 0,
-        FILE_NOT_OPEN      = 1,
-        INVALID_DIMENSIONS = 2,
-        READ_ERROR         = 3,
-        WRITE_ERROR        = 4,
-        INVALID_FORMAT     = 5
-    };
-
-    enum Format {
-        FORMAT_0 = 0, // default row-major format
-        FORMAT_1 = 1  // a kind of column-major format
-    };
-
     NonUniformMatrixXf()
         : RowMatrixXf(0, 0)
         , x_coords(0)
@@ -32,38 +16,11 @@ public:
 
     ~NonUniformMatrixXf() = default;
 
+public:
     // Fill with sample data
     void fill_pattern();
 
     friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
-
-    /**
-     * @brief Load from file
-     * @param path File path
-     * @return int Error code
-     */
-    int load(const std::string& path, Format format = FORMAT_0);
-
-    /**
-     * @brief Load from stringstream
-     * @param stream stringstream object to load from
-     * @return int Error code
-     */
-    int load(std::stringstream& stream, Format format = FORMAT_0);
-
-    /**
-     * @brief Save to file
-     * @param path File path
-     * @return int Error code
-     */
-    int save(const std::string& path, Format format = FORMAT_0) const;
-
-    /**
-     * @brief Save to stringstream
-     * @param stream stringstream object to save to
-     * @return int Error code
-     */
-    int save(std::stringstream& stream, Format format = FORMAT_0) const;
 
 public:
     Eigen::VectorXf y_coords; // Row coordinates of center, V-direction
