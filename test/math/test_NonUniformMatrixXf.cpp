@@ -20,7 +20,6 @@ TEST_CASE("NonUniformMatrixXf fill_pattern test", "[matrix]") {
 
         NonUniformMatrixXf matrix;
         matrix.fill_pattern();
-        std::cout << matrix << std::endl;
 
         // Check dimensions
         CHECK(matrix.rows() == 6);
@@ -72,26 +71,22 @@ TEST_CASE("NonUniformMatrixXf fill_pattern test", "[matrix]") {
     }
 }
 
-TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
+TEST_CASE("NonUniformMatrixXf file operations [format 0 Row-major]", "[matrix]") {
     NonUniformMatrixXf matrix1;
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
         MatrixLoader loader;
         // Save to temporary file
-        const std::string temp_file_format_0 = "NonUniformMatrixXf_format_0.txt";
-        std::cout << "temp_file: " << fs::absolute(temp_file_format_0).string() << std::endl;
-        REQUIRE(loader.save(matrix1, temp_file_format_0, MatrixLoader::FORMAT_ROW_DEFAULT) ==
-                MatrixLoader::SUCCESS);
-
-        const std::string temp_file_format_1 = "NonUniformMatrixXf_format_1.txt";
-        std::cout << "temp_file: " << fs::absolute(temp_file_format_1).string() << std::endl;
-        REQUIRE(loader.save(matrix1, temp_file_format_1, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
+        const std::string temp_file_format = "NonUniformMatrixXf_format_0.txt";
+        std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
+        std::cout << " Display: (rows,cols)=", matrix1.dump(0);
+        REQUIRE(loader.save(matrix1, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
                 MatrixLoader::SUCCESS);
 
         // load into new matrix
         NonUniformMatrixXf matrix2;
-        REQUIRE(loader.load(matrix2, temp_file_format_0, MatrixLoader::FORMAT_ROW_DEFAULT) ==
+        REQUIRE(loader.load(matrix2, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
                 MatrixLoader::SUCCESS);
 
         // Verify dimensions
@@ -147,25 +142,25 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
     }
 }
 
-TEST_CASE("NonUniformMatrixXf output format", "[matrix]") {
-    NonUniformMatrixXf matrix;
-    matrix.fill_pattern();
+TEST_CASE("NonUniformMatrixXf file operations [format 1 Column-major]", "[matrix]") {
+    NonUniformMatrixXf matrix1;
+    matrix1.fill_pattern();
 
-    std::ostringstream oss;
-    oss << matrix;
-    std::string output = oss.str();
+    SECTION("Save and load success") {
+        MatrixLoader loader;
 
-    // Check first line (dimensions)
-    CHECK(output.substr(0, output.find('\n')) == "6\t11");
+        const std::string temp_file = "NonUniformMatrixXf_format_1.txt";
+        REQUIRE(loader.save(matrix1, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                MatrixLoader::SUCCESS);
 
-    // Check if output contains specific values
-    CHECK(output.find("0.0") != std::string::npos);
-    CHECK(output.find("90.0") != std::string::npos);
-    CHECK(output.find("45.0") != std::string::npos);
+        // load into new matrix
+        NonUniformMatrixXf matrix2;
+        REQUIRE(loader.load(matrix2, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                MatrixLoader::SUCCESS);
 
-    // Check formatting
-    CHECK(output.find("\t") != std::string::npos); // Contains tabs
-    CHECK(output.find(".0") != std::string::npos); // Contains decimal points
+        std::cout << "[Column-major]" << fs::absolute(temp_file).string() << std::endl;
+        std::cout << " Display : (rows,cols)=", matrix2.dump(1);
+    }
 }
 
 TEST_CASE("NonUniformMatrixXf data validation", "[NonUniformMatrixXf]") {

@@ -2,6 +2,7 @@
 #define PHOENIX_NonUniformMatrixXf_H
 
 #include "shape/EigenDefine.hpp"
+#include "utility/ColorOutput.h"
 #include <iomanip> // For std::setw and std::setprecision
 #include <iostream>
 
@@ -20,6 +21,8 @@ public:
     // Fill with sample data
     void fill_pattern();
 
+    void dump(int format) const;
+
     friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
 
 public:
@@ -36,24 +39,26 @@ inline std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matr
     os << std::fixed << std::setprecision(1);
 
     // Output dimensions
-    os << matrix.rows() << "\t" << matrix.cols() << "\n";
+    os << Color::GREEN << matrix.rows() << "\t" << Color::YELLOW << matrix.cols() << "\n";
 
     // Output x coordinates row
-    os << "  y \\x\t";
+    os << Color::GREEN << "y" << Color::MAGENTA << " \\ " << Color::YELLOW << "x";
+
     for (int j = 0; j < matrix.cols(); ++j) {
-        os << std::setw(5) << matrix.x_coords(j);
+        os << "\t" << matrix.x_coords(j);
     }
     os << "\n";
 
     // Output y coordinates and matrix values
     for (int i = 0; i < matrix.rows(); ++i) {
-        os << std::setw(5) << matrix.y_coords(i) << "\t";
+        os << Color::GREEN << matrix.y_coords(i) << Color::MAGENTA;
         for (int j = 0; j < matrix.cols(); ++j) {
-            os << std::setw(5) << matrix(i, j);
+            os << "\t" << matrix(i, j);
         }
         os << "\n";
     }
 
+    std::cout << Color::RESET;
     // Restore original format settings
     os.flags(old_flags);
     os.precision(old_precision);

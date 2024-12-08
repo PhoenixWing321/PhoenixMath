@@ -5,6 +5,37 @@
 namespace Phoenix {
 
 //------------------------------------------------------
+void NonUniformMatrixXf::dump(int format) const {
+    if (format == 0) {
+
+        std::cout << (*this) << std::endl;
+    }
+    else {
+        // Set new format: fixed width, right-aligned, 1 decimal place
+        std::cout << std::fixed << std::setprecision(3);
+
+        // Output dimensions
+        std::cout << Color::GREEN << rows() << "\t" << Color::YELLOW << cols() << "\n";
+
+        // Output y coordinates
+        std::cout << Color::YELLOW << "x" << Color::MAGENTA << " \\ " << Color::GREEN << "y";
+        for (int y = 0; y < rows(); ++y) {
+            std::cout << "\t" << y_coords(y);
+        }
+        std::cout << "\n";
+
+        // Output y coordinates and matrix values
+        for (int x = 0; x < cols(); ++x) {
+            std::cout << Color::YELLOW << x_coords(x) << Color::MAGENTA;
+            for (int y = 0; y < rows(); ++y) {
+                std::cout << "\t" << coeff(y, x);
+            }
+            std::cout << "\n";
+        }
+    }
+    std::cout << Color::RESET;
+}
+//------------------------------------------------------
 void NonUniformMatrixXf::fill_pattern() {
     // Set dimensions
     x_coords = Eigen::VectorXf(11);

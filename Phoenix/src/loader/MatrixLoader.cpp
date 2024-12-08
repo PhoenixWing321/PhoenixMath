@@ -9,13 +9,12 @@ namespace Phoenix {
 //------------------------------------------------------
 int MatrixLoader::load(NonUniformMatrixXf& matrix, const std::string& path, Format format) const {
     std::ifstream file(path);
-    if (!file.is_open()) {
-        return FILE_NOT_OPEN;
-    }
+    if (!file.is_open()) return FILE_NOT_OPEN;
+
     // Read dimensions
     int rows, cols;
     file >> rows >> cols;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore rest of the line
 
     if (!file.good() || rows <= 0 || cols <= 0) {
         return INVALID_DIMENSIONS;
@@ -36,27 +35,53 @@ int MatrixLoader::load(NonUniformMatrixXf& matrix, const std::string& path, Form
 }
 //------------------------------------------------------
 int MatrixLoader::load(NonUniformMatrixXf& matrix, std::stringstream& buffer, Format format) const {
-    if (!buffer.good()) {
-        return READ_ERROR;
-    }
+    if (!buffer.good()) return READ_ERROR;
     // check dimensions: x<==>cols, y<==>rows
     if (matrix.y_coords.size() != matrix.rows() || matrix.x_coords.size() != matrix.cols()) {
         return INVALID_DIMENSIONS;
     }
 
-    // Read x coordinates (column coordinates)
-    for (int x = 0; x < matrix.x_coords.size(); ++x) {
-        buffer >> matrix.x_coords(x);
-    }
-
-    // Read y coordinates (row coordinates) and matrix values
-    for (int y = 0; y < matrix.y_coords.size(); ++y) {
-        buffer >> matrix.y_coords(y);
-        for (int x = 0; x < matrix.cols(); ++x) {
-            buffer >> matrix(y, x);
+    switch (format) {
+    case FORMAT_ROW_DEFAULT: {
+        // Read x coordinates (column coordinates)
+        for (int x = 0; x < matrix.x_coords.size(); ++x) {
+            buffer >> matrix.x_coords(x);
+            if (!buffer.good()) return READ_ERROR;
         }
-    }
 
+        // Read y coordinates (row coordinates) and matrix values
+        for (int y = 0; y < matrix.y_coords.size(); ++y) {
+            buffer >> matrix.y_coords(y);
+            for (int x = 0; x < matrix.cols(); ++x) {
+                buffer >> matrix(y, x);
+                if (!buffer.good()) return READ_ERROR;
+            }
+        }
+    } break;
+    case FORMAT_COL_COORD_FIRST: {
+        // 01. Read y coordinates (column coordinates)
+        for (int y = 0; y < matrix.y_coords.size(); ++y) {
+            buffer >> matrix.y_coords(y);
+            if (!buffer.good()) return READ_ERROR;
+        }
+
+        // 02. Read x coordinates (row coordinates)
+        for (int x = 0; x < matrix.x_coords.size(); ++x) {
+            buffer >> matrix.x_coords(x);
+            if (!buffer.good()) return READ_ERROR;
+        }
+
+        // 03. Read matrix values: column-major
+        for (int x = 0; x < matrix.x_coords.size(); ++x) {
+            for (int y = 0; y < matrix.y_coords.size(); ++y) {
+                buffer >> matrix(y, x);
+                if (!buffer.good()) return READ_ERROR;
+            }
+        }
+    } break;
+    default:
+        return INVALID_FORMAT;
+    }
     return buffer.good() ? SUCCESS : READ_ERROR;
 }
 //------------------------------------------------------
