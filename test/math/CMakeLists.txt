@@ -14,3 +14,9 @@ add_test(NAME "test_BoundedMatrixXf" COMMAND test_BoundedMatrixXf)
 add_executable(test_Bounds2f "test_Bounds2f.cpp")
 target_link_libraries(test_Bounds2f PhoenixMath)
 add_test(NAME "test_Bounds2f" COMMAND test_Bounds2f)
+
+# === test ===
+add_executable(test_CoordsMatrixXf "test_CoordsMatrixXf.cpp")
+target_link_libraries(test_CoordsMatrixXf PhoenixMath)
+add_test(NAME "test_CoordsMatrixXf" COMMAND test_CoordsMatrixXf)
+
