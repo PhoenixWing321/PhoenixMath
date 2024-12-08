@@ -31,9 +31,33 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
 
-    int read(const std::string& path);
-    int read(std::ifstream& file);
+    /**
+     * @brief Load from file
+     * @param path File path
+     * @return int Error code
+     */
+    int load(const std::string& path);
+
+    /**
+     * @brief Load from stringstream
+     * @param stream stringstream object to load from
+     * @return int Error code
+     */
+    int load(std::stringstream& stream);
+
+    /**
+     * @brief Save to file
+     * @param path File path
+     * @return int Error code
+     */
     int save(const std::string& path) const;
+
+    /**
+     * @brief Save to stringstream
+     * @param stream stringstream object to save to
+     * @return int Error code
+     */
+    int save(std::stringstream& stream) const;
 
 public:
     Eigen::VectorXf y_coords; // Row coordinates of center, V-direction

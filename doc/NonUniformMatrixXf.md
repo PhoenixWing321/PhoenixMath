@@ -41,10 +41,16 @@ void fill_pattern();   // 填充示例数据
 ```
 
 ### 文件操作
+- 命名load/save 组合
+更适合处理对象序列化和反序列化
+暗示了数据持久化的概念
+常用于配置文件、游戏存档、模型保存等场景
+
 ```cpp
-int read(const std::string& path);    // 从文件读取
-int read(std::ifstream& file);        // 从流读取(支持连续读取多个矩阵)
-int save(const std::string& path) const;  // 保存到文件
+int load(const std::string& path);    // 从文件读取 
+int load(std::stringstream& stream);  // 从流读取(支持连续读取多个矩阵)
+int save(const std::string& path) const;  // 保存到文件 
+int save(std::stringstream& stream) const;  // 保存到流 
 ```
 
 ### 输出格式化
@@ -65,14 +71,14 @@ std::cout << matrix << std::endl;
 ```cpp
 // 单个矩阵读写
 NonUniformMatrixXf matrix;
-matrix.read("input.txt");
+matrix.load("input.txt");
 matrix.save("output.txt");
 
 // 连续读取多个矩阵
 std::ifstream file("matrices.txt");
 NonUniformMatrixXf matrix1, matrix2;
-matrix1.read(file);
-matrix2.read(file);
+matrix1.load(file);
+matrix2.load(file);
 file.close();
 ```
 

@@ -3,6 +3,7 @@
 
 namespace Phoenix {
 
+//------------------------------------------------------
 void NonUniformMatrixXf::fill_pattern() {
     // Set dimensions
     x_coords = Eigen::VectorXf(11);
@@ -23,23 +24,29 @@ void NonUniformMatrixXf::fill_pattern() {
         8.5f, 9.2f, 11.0f, 14.0f, 17.0f, 18.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f,   // Row 4
         12.0f, 13.0f, 15.0f, 16.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f, 20.0f, 20.0f; // Row 5
 }
-
-int NonUniformMatrixXf::read(const std::string& path) {
+//------------------------------------------------------
+int NonUniformMatrixXf::load(const std::string& path) {
     std::ifstream file(path);
     if (!file.is_open()) {
         return FILE_NOT_OPEN;
     }
-    return read(file);
-}
 
-int NonUniformMatrixXf::read(std::ifstream& file) {
-    if (!file.good()) {
+    // Read entire file content into a string
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+
+    return load(buffer);
+}
+//------------------------------------------------------
+int NonUniformMatrixXf::load(std::stringstream& buffer) {
+    this->resize(0, 0);
+    if (!buffer.good()) {
         return READ_ERROR;
     }
 
     // Read dimensions
     int rows, cols;
-    file >> rows >> cols;
+    buffer >> rows >> cols;
 
     // Validate dimensions
     if (rows <= 0 || cols <= 0) {
@@ -53,57 +60,56 @@ int NonUniformMatrixXf::read(std::ifstream& file) {
 
     // Read x coordinates (column coordinates)
     for (int j = 0; j < cols; ++j) {
-        file >> x_coords(j);
+        buffer >> x_coords(j);
     }
 
     // Read y coordinates (row coordinates) and matrix values
     for (int i = 0; i < rows; ++i) {
-        file >> y_coords(i);
+        buffer >> y_coords(i);
         for (int j = 0; j < cols; ++j) {
-            file >> (*this)(i, j);
+            buffer >> (*this)(i, j);
         }
     }
 
-    return file.good() ? SUCCESS : READ_ERROR;
+    return buffer.good() ? SUCCESS : READ_ERROR;
 }
-
+//------------------------------------------------------
 int NonUniformMatrixXf::save(const std::string& path) const {
+    // DO NOT set output format
+    std::stringstream stream;
+    auto              code = save(stream);
+    if (code != SUCCESS) return code;
+
     std::ofstream file(path);
-    if (!file.is_open()) {
-        return FILE_NOT_OPEN;
-    }
-
-    // Save original format settings
-    auto old_flags     = file.flags();
-    auto old_precision = file.precision();
-
-    // Set output format
-    file << std::fixed << std::setprecision(1);
-
-    // Write dimensions
-    file << rows() << "\t" << cols() << "\n";
-
-    // Write x coordinates (column coordinates)
-    file << "\t";
-    for (int j = 0; j < cols(); ++j) {
-        file << std::setw(5) << x_coords(j);
-    }
-    file << "\n";
-
-    // Write y coordinates (row coordinates) and matrix values
-    for (int i = 0; i < rows(); ++i) {
-        file << std::setw(3) << y_coords(i) << "\t";
-        for (int j = 0; j < cols(); ++j) {
-            file << std::setw(5) << (*this)(i, j);
-        }
-        file << "\n";
-    }
-
-    // Restore original format settings
-    file.flags(old_flags);
-    file.precision(old_precision);
+    if (!file.is_open()) return FILE_NOT_OPEN;
+    // Write entire content to file at once
+    file << stream.str();
 
     return file.good() ? SUCCESS : WRITE_ERROR;
 }
+//------------------------------------------------------
+int NonUniformMatrixXf::save(std::stringstream& stream) const {
+    if (!stream.good()) return WRITE_ERROR;
+    // DO NOT set output format
 
+    // Write dimensions
+    stream << rows() << "\t" << cols() << "\n";
+
+    // Write x coordinates (column coordinates)
+    for (int j = 0; j < cols(); ++j) {
+        stream << "\t" << x_coords(j);
+    }
+    stream << "\n";
+
+    // Write y coordinates (row coordinates) and matrix values
+    for (int i = 0; i < rows(); ++i) {
+        stream << y_coords(i);
+        for (int j = 0; j < cols(); ++j) {
+            stream << "\t" << (*this)(i, j);
+        }
+        stream << "\n";
+    }
+
+    return stream.good() ? SUCCESS : WRITE_ERROR;
+}
 } // namespace Phoenix

@@ -129,6 +129,12 @@
                 "tensor": "cpp"
         },
         "cSpell.words": [
-                "Eigen"
+                "AABB",
+                "cout",
+                "Eigen",
+                "endl",
+                "ifstream",
+                "ostream",
+                "stringstream"
         ]
 }

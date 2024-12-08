@@ -75,14 +75,15 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
     NonUniformMatrixXf matrix1;
     matrix1.fill_pattern();
 
-    SECTION("Save and read success") {
+    SECTION("Save and load success") {
         // Save to temporary file
-        const std::string temp_file = "test_matrix.txt";
+        const std::string temp_file = "NonUniformMatrixXf.txt";
+        std::cout << "temp_file: " << fs::absolute(temp_file).string() << std::endl;
         REQUIRE(matrix1.save(temp_file) == NonUniformMatrixXf::SUCCESS);
 
-        // Read into new matrix
+        // load into new matrix
         NonUniformMatrixXf matrix2;
-        REQUIRE(matrix2.read(temp_file) == NonUniformMatrixXf::SUCCESS);
+        REQUIRE(matrix2.load(temp_file) == NonUniformMatrixXf::SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());
@@ -113,7 +114,7 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
         NonUniformMatrixXf matrix;
 
         // Test FILE_NOT_OPEN error
-        CHECK(matrix.read("non_existent_file.txt") == NonUniformMatrixXf::FILE_NOT_OPEN);
+        CHECK(matrix.load("non_existent_file.txt") == NonUniformMatrixXf::FILE_NOT_OPEN);
         CHECK(matrix1.save("/invalid/path/file.txt") == NonUniformMatrixXf::FILE_NOT_OPEN);
 
         // Test INVALID_DIMENSIONS error
@@ -121,7 +122,7 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
             std::ofstream bad_file("bad_dimensions.txt");
             bad_file << "-1\t-1\n";
             bad_file.close();
-            CHECK(matrix.read("bad_dimensions.txt") == NonUniformMatrixXf::INVALID_DIMENSIONS);
+            CHECK(matrix.load("bad_dimensions.txt") == NonUniformMatrixXf::INVALID_DIMENSIONS);
             std::remove("bad_dimensions.txt");
         }
 
@@ -130,7 +131,7 @@ TEST_CASE("NonUniformMatrixXf file operations", "[matrix]") {
             std::ofstream bad_file("corrupted.txt");
             bad_file << "6\t11\nnotanumber";
             bad_file.close();
-            CHECK(matrix.read("corrupted.txt") == NonUniformMatrixXf::READ_ERROR);
+            CHECK(matrix.load("corrupted.txt") == NonUniformMatrixXf::READ_ERROR);
             std::remove("corrupted.txt");
         }
     }
