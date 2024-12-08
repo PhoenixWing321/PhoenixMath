@@ -1,11 +1,11 @@
-#include "shape/NonUniformMatrixXf.h"
+#include "shape/CoordsMatrixXf.h"
 #include "utility/StreamTools.hpp"
 #include <fstream>
 
 namespace Phoenix {
 
 //------------------------------------------------------
-void NonUniformMatrixXf::dump(int format) const {
+void CoordsMatrixXf::dump(int format) const {
     if (format == 0) {
 
         std::cout << (*this) << std::endl;
@@ -36,7 +36,7 @@ void NonUniformMatrixXf::dump(int format) const {
     std::cout << Color::RESET;
 }
 //------------------------------------------------------
-void NonUniformMatrixXf::fill_pattern() {
+void CoordsMatrixXf::fill_pattern() {
     // Set dimensions
     x_coords = Eigen::VectorXf(11);
     y_coords = Eigen::VectorXf(6);

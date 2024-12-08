@@ -1,7 +1,7 @@
 #ifndef PHOENIX_MatrixLoader_H
 #define PHOENIX_MatrixLoader_H
 
-#include "shape/NonUniformMatrixXf.h"
+#include "shape/CoordsMatrixXf.h"
 #include <iostream>
 
 namespace Phoenix {
@@ -35,7 +35,7 @@ public:
      * @param path File path
      * @return int Error code
      */
-    int load(NonUniformMatrixXf& matrix, const std::string& path,
+    int load(CoordsMatrixXf& matrix, const std::string& path,
              Format format = FORMAT_ROW_DEFAULT) const;
 
     /**
@@ -43,7 +43,7 @@ public:
      * @param stream stringstream object to load from
      * @return int Error code
      */
-    int load(NonUniformMatrixXf& matrix, std::stringstream& stream,
+    int load(CoordsMatrixXf& matrix, std::stringstream& stream,
              Format format = FORMAT_ROW_DEFAULT) const;
 
     /**
@@ -51,7 +51,7 @@ public:
      * @param path File path
      * @return int Error code
      */
-    int save(NonUniformMatrixXf& matrix, const std::string& path,
+    int save(CoordsMatrixXf& matrix, const std::string& path,
              Format format = FORMAT_ROW_DEFAULT) const;
 
     /**
@@ -59,7 +59,7 @@ public:
      * @param stream stringstream object to save to
      * @return int Error code
      */
-    int save(NonUniformMatrixXf& matrix, std::stringstream& stream,
+    int save(CoordsMatrixXf& matrix, std::stringstream& stream,
              Format format = FORMAT_ROW_DEFAULT) const;
 
 public:

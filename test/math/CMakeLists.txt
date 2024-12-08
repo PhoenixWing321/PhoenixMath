@@ -16,7 +16,7 @@ target_link_libraries(test_Bounds2f PhoenixMath)
 add_test(NAME "test_Bounds2f" COMMAND test_Bounds2f)
 
 # === test ===
-add_executable(test_NonUniformMatrixXf "test_NonUniformMatrixXf.cpp")
-target_link_libraries(test_NonUniformMatrixXf PhoenixMath)
-add_test(NAME "test_NonUniformMatrixXf" COMMAND test_NonUniformMatrixXf)
+add_executable(test_CoordsMatrixXf "test_CoordsMatrixXf.cpp")
+target_link_libraries(test_CoordsMatrixXf PhoenixMath)
+add_test(NAME "test_CoordsMatrixXf" COMMAND test_CoordsMatrixXf)
 

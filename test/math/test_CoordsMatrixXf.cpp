@@ -1,15 +1,15 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 #include "loader/MatrixLoader.h"
-#include "shape/NonUniformMatrixXf.h"
+#include "shape/CoordsMatrixXf.h"
 
 #include "../inside.hpp"
 
 using namespace Phoenix;
 
-TEST_CASE("NonUniformMatrixXf fill_pattern test", "[matrix]") {
+TEST_CASE("CoordsMatrixXf fill_pattern test", "[matrix]") {
     SECTION("Default constructor") {
-        NonUniformMatrixXf matrix;
+        CoordsMatrixXf matrix;
         CHECK(matrix.rows() == 0);
         CHECK(matrix.cols() == 0);
         CHECK(matrix.x_coords.size() == 0);
@@ -18,7 +18,7 @@ TEST_CASE("NonUniformMatrixXf fill_pattern test", "[matrix]") {
 
     SECTION("fill_pattern") {
 
-        NonUniformMatrixXf matrix;
+        CoordsMatrixXf matrix;
         matrix.fill_pattern();
 
         // Check dimensions
@@ -71,21 +71,21 @@ TEST_CASE("NonUniformMatrixXf fill_pattern test", "[matrix]") {
     }
 }
 
-TEST_CASE("NonUniformMatrixXf file operations [format 0 Row-major]", "[matrix]") {
-    NonUniformMatrixXf matrix1;
+TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
+    CoordsMatrixXf matrix1;
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
         MatrixLoader loader;
         // Save to temporary file
-        const std::string temp_file_format = "NonUniformMatrixXf_format_0.txt";
+        const std::string temp_file_format = "CoordsMatrixXf_format_0.txt";
         std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
         std::cout << " Display: (rows,cols)=", matrix1.dump(0);
         REQUIRE(loader.save(matrix1, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
                 MatrixLoader::SUCCESS);
 
         // load into new matrix
-        NonUniformMatrixXf matrix2;
+        CoordsMatrixXf matrix2;
         REQUIRE(loader.load(matrix2, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
                 MatrixLoader::SUCCESS);
 
@@ -115,8 +115,8 @@ TEST_CASE("NonUniformMatrixXf file operations [format 0 Row-major]", "[matrix]")
     }
 
     SECTION("File operation errors") {
-        NonUniformMatrixXf matrix;
-        MatrixLoader       loader;
+        CoordsMatrixXf matrix;
+        MatrixLoader   loader;
 
         // Test FILE_NOT_OPEN error
         CHECK(loader.load(matrix, "non_existent_file.txt") == MatrixLoader::FILE_NOT_OPEN);
@@ -142,19 +142,19 @@ TEST_CASE("NonUniformMatrixXf file operations [format 0 Row-major]", "[matrix]")
     }
 }
 
-TEST_CASE("NonUniformMatrixXf file operations [format 1 Column-major]", "[matrix]") {
-    NonUniformMatrixXf matrix1;
+TEST_CASE("CoordsMatrixXf file operations [format 1 Column-major]", "[matrix]") {
+    CoordsMatrixXf matrix1;
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
         MatrixLoader loader;
 
-        const std::string temp_file = "NonUniformMatrixXf_format_1.txt";
+        const std::string temp_file = "CoordsMatrixXf_format_1.txt";
         REQUIRE(loader.save(matrix1, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
                 MatrixLoader::SUCCESS);
 
         // load into new matrix
-        NonUniformMatrixXf matrix2;
+        CoordsMatrixXf matrix2;
         REQUIRE(loader.load(matrix2, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
                 MatrixLoader::SUCCESS);
 
@@ -163,8 +163,8 @@ TEST_CASE("NonUniformMatrixXf file operations [format 1 Column-major]", "[matrix
     }
 }
 
-TEST_CASE("NonUniformMatrixXf data validation", "[NonUniformMatrixXf]") {
-    NonUniformMatrixXf matrix;
+TEST_CASE("CoordsMatrixXf data validation", "[CoordsMatrixXf]") {
+    CoordsMatrixXf matrix;
     matrix.fill_pattern();
 
     SECTION("Monotonicity check") {

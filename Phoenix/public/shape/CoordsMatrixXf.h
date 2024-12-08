@@ -1,5 +1,5 @@
-#ifndef PHOENIX_NonUniformMatrixXf_H
-#define PHOENIX_NonUniformMatrixXf_H
+#ifndef PHOENIX_CoordsMatrixXf_H
+#define PHOENIX_CoordsMatrixXf_H
 
 #include "shape/EigenDefine.hpp"
 #include "utility/ColorOutput.h"
@@ -8,14 +8,14 @@
 
 namespace Phoenix {
 
-class NonUniformMatrixXf : public RowMatrixXf {
+class CoordsMatrixXf : public RowMatrixXf {
 public:
-    NonUniformMatrixXf()
+    CoordsMatrixXf()
         : RowMatrixXf(0, 0)
         , x_coords(0)
         , y_coords(0) {}
 
-    ~NonUniformMatrixXf() = default;
+    ~CoordsMatrixXf() = default;
 
 public:
     // Fill with sample data
@@ -23,14 +23,14 @@ public:
 
     void dump(int format) const;
 
-    friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
+    friend std::ostream& operator<<(std::ostream& os, const CoordsMatrixXf& matrix);
 
 public:
     Eigen::VectorXf y_coords; // Row coordinates of center, V-direction
     Eigen::VectorXf x_coords; // Column coordinates of center, U-direction
 };
 
-inline std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix) {
+inline std::ostream& operator<<(std::ostream& os, const CoordsMatrixXf& matrix) {
     // Save original format settings
     auto old_flags     = os.flags();
     auto old_precision = os.precision();

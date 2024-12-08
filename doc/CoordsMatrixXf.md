@@ -1,4 +1,4 @@
-# NonUniformMatrixXf
+# CoordsMatrixXf
 非等宽矩阵类，用于处理非均匀网格数据。
 
 ## 数据结构
@@ -32,7 +32,7 @@ ym  vm1 vm2 ... vmn
 
 ### 构造函数
 ```cpp
-NonUniformMatrixXf();  // 默认构造函数
+CoordsMatrixXf();  // 默认构造函数
 ```
 
 ### 数据操作
@@ -55,14 +55,14 @@ int save(std::stringstream& stream) const;  // 保存到流
 
 ### 输出格式化
 ```cpp
-friend std::ostream& operator<<(std::ostream& os, const NonUniformMatrixXf& matrix);
+friend std::ostream& operator<<(std::ostream& os, const CoordsMatrixXf& matrix);
 ```
 
 ## 使用示例
 
 ### 基本操作
 ```cpp
-NonUniformMatrixXf matrix;
+CoordsMatrixXf matrix;
 matrix.fill_pattern();
 std::cout << matrix << std::endl;
 ```
@@ -70,13 +70,13 @@ std::cout << matrix << std::endl;
 ### 文件操作
 ```cpp
 // 单个矩阵读写
-NonUniformMatrixXf matrix;
+CoordsMatrixXf matrix;
 matrix.load("input.txt");
 matrix.save("output.txt");
 
 // 连续读取多个矩阵
 std::ifstream file("matrices.txt");
-NonUniformMatrixXf matrix1, matrix2;
+CoordsMatrixXf matrix1, matrix2;
 matrix1.load(file);
 matrix2.load(file);
 file.close();
