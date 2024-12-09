@@ -80,7 +80,7 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
         // Save to temporary file
         const std::string temp_file_format = "CoordsMatrixXf_format_0.txt";
         std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
-        std::cout << " Display: (rows,cols)=", matrix1.dump(0);
+        std::cout << " Display: (rows,cols)= \n", matrix1.dump(0, 10, 10);
         REQUIRE(loader.save(matrix1, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
                 MatrixLoader::SUCCESS);
 
@@ -159,7 +159,7 @@ TEST_CASE("CoordsMatrixXf file operations [format 1 Column-major]", "[matrix]") 
                 MatrixLoader::SUCCESS);
 
         std::cout << "[Column-major]" << fs::absolute(temp_file).string() << std::endl;
-        std::cout << " Display : (rows,cols)=", matrix2.dump(1);
+        std::cout << " Display: (rows,cols)= \n", matrix2.dump(1, 10, 10);
     }
 }
 

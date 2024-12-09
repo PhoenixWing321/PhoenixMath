@@ -5,50 +5,66 @@
 namespace Phoenix {
 
 //------------------------------------------------------
-void CoordsMatrixXf::dump(int format, int rows0, size_t cols0) const {
-    if (rows0 > rows()) rows0 = rows();
-    if (cols0 > cols()) cols0 = cols();
+void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
+    if (rows0 > rows()) rows0 = (int)rows();
+    if (cols0 > cols()) cols0 = (int)cols();
 
     std::cout << std::fixed << std::setprecision(3);
 
     // Output dimensions
-    std::cout << Color::GREEN << rows0 << "\t" << Color::YELLOW << cols0 << "\n";
+    std::cout << Color::GREEN << rows() << Color::RESET << " x " << Color::YELLOW << cols()
+              << Color::RESET << ((format == 0) ? "\tRow-major" : "\tColumn-major") << std::endl;
 
     if (format == 0) {
-        // Output x coordinates row
-        std::cout << Color::GREEN << "y" << Color::MAGENTA << " \\ " << Color::YELLOW << "x";
-
-        for (int j = 0; j < cols0; ++j) {
-            std::cout << "\t" << x_coords(j);
+        std::cout << Color::YELLOW << "\t";
+        for (int x = 0; x < cols0; ++x) {
+            std::cout << "\t" << x;
         }
-        std::cout << "\n";
+        if (cols0 < cols()) std::cout << "\t...";
+        std::cout << std::endl;
+        // Output x coordinates row
+        std::cout << Color::GREEN << "\t"
+                  << "y" << Color::MAGENTA << " \\ " << Color::YELLOW << "x";
+
+        for (int x = 0; x < cols0; ++x) {
+            std::cout << "\t" << x_coords(x);
+        }
+        std::cout << std::endl;
 
         // Output y coordinates and matrix values
-        for (int i = 0; i < rows0; ++i) {
-            std::cout << Color::GREEN << y_coords(i) << Color::MAGENTA;
-            for (int j = 0; j < cols0; ++j) {
-                std::cout << "\t" << coeff(i, j);
+        for (int y = 0; y < rows0; ++y) {
+            std::cout << Color::GREEN << y << "\t" << y_coords(y) << Color::MAGENTA;
+            for (int x = 0; x < cols0; ++x) {
+                std::cout << "\t" << coeff(y, x);
             }
-            std::cout << "\n";
+            std::cout << std::endl;
         }
+        if (rows0 < rows()) std::cout << Color::GREEN << "..." << std::endl;
     }
     else {
-
+        std::cout << Color::GREEN << "\t";
+        for (int x = 0; x < rows0; ++x) {
+            std::cout << "\t" << x;
+        }
+        std::cout << std::endl;
         // Output y coordinates
-        std::cout << Color::YELLOW << "x" << Color::MAGENTA << " \\ " << Color::GREEN << "y";
+        std::cout << Color::YELLOW << "\t"
+                  << "x" << Color::MAGENTA << " \\ " << Color::GREEN << "y";
         for (int y = 0; y < rows0; ++y) {
             std::cout << "\t" << y_coords(y);
         }
-        std::cout << "\n";
+        if (rows0 < rows()) std::cout << "\t..." << std::endl;
+        std::cout << std::endl;
 
         // Output y coordinates and matrix values
         for (int x = 0; x < cols0; ++x) {
-            std::cout << Color::YELLOW << x_coords(x) << Color::MAGENTA;
+            std::cout << Color::YELLOW << x << "\t" << x_coords(x) << Color::MAGENTA;
             for (int y = 0; y < rows0; ++y) {
                 std::cout << "\t" << coeff(y, x);
             }
-            std::cout << "\n";
+            std::cout << std::endl;
         }
+        if (cols0 < cols()) std::cout << Color::YELLOW << "..." << std::endl;
     }
     std::cout << Color::RESET;
 }

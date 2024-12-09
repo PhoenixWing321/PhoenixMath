@@ -21,7 +21,7 @@ public:
     // Fill with sample data
     void fill_pattern();
 
-    void dump(int format, int rows = 20, size_t cols = 10) const;
+    void dump(int format, int rows = 20, int cols = 10) const;
 
     friend std::ostream& operator<<(std::ostream& os, const CoordsMatrixXf& matrix);
 
