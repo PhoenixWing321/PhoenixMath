@@ -20,7 +20,7 @@ Copy-Item -Path "$buildDir\Phoenix\Debug\PhoenixMath.lib" -Destination "$outputD
 Write-Host "Copying Release lib: $buildDir\Phoenix\Release\PhoenixMath.lib -> $outputDir\bin\"   
 Copy-Item -Path "$buildDir\Phoenix\Release\PhoenixMath.lib" -Destination "$outputDir\bin\" -Force
 
-Write-Host "Copying headers: .\Phoenix\public\* -> $ROOT_DIR_3rdParty\PhoenixMah\Phoenix\"
-Copy-Item -Path ".\Phoenix\public\*" -Destination "$ROOT_DIR_3rdParty\PhoenixMah\Phoenix\" -Recurse -Force
+Write-Host "Copying headers: .\Phoenix\public\* -> $ROOT_DIR_3rdParty\PhoenixMath\Phoenix\"
+Copy-Item -Path ".\Phoenix\public\*" -Destination "$ROOT_DIR_3rdParty\PhoenixMath\Phoenix\" -Recurse -Force
 
 Write-Host "Export completed!"

@@ -8,8 +8,10 @@ namespace Phoenix {
 void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
     if (rows0 > rows()) rows0 = (int)rows();
     if (cols0 > cols()) cols0 = (int)cols();
-
-    std::cout << std::fixed << std::setprecision(3);
+    // 保存当前格式状态
+    std::ios_base::fmtflags oldFlags     = std::cout.flags();
+    std::streamsize         oldPrecision = std::cout.precision();
+    std::cout << std::defaultfloat;
 
     // Output dimensions
     std::cout << Color::GREEN << rows() << Color::RESET << " x " << Color::YELLOW << cols()
@@ -67,13 +69,15 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
         if (cols0 < cols()) std::cout << Color::YELLOW << "..." << std::endl;
     }
     std::cout << Color::RESET;
+
+    // 恢复原来的格式状态
+    std::cout.flags(oldFlags);
+    std::cout.precision(oldPrecision);
 }
 //------------------------------------------------------
 void CoordsMatrixXf::fill_pattern() {
     // Set dimensions
-    x_coords = Eigen::VectorXf(11);
-    y_coords = Eigen::VectorXf(6);
-    this->resize(6, 11);
+    CoordsMatrixXf::resize(6, 11);
 
     // Set x coordinates
     x_coords << 0, 2, 4, 10, 20, 40, 60, 80, 85, 88, 90;

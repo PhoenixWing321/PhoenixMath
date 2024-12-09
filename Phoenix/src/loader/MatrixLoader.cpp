@@ -22,8 +22,6 @@ Code MatrixLoader::load(CoordsMatrixXf& matrix, const std::string& path, Format 
 
     // Resize containers
     matrix.resize(rows, cols);
-    matrix.x_coords.resize(cols);
-    matrix.y_coords.resize(rows);
 
     // a buffer to read from file
     std::stringstream buffer;

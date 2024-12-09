@@ -25,6 +25,17 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const CoordsMatrixXf& matrix);
 
+    /**
+     * @brief Resize the matrix and the coordinates
+     * @param rows: number of rows
+     * @param cols: number of columns
+     */
+    void resize(Eigen::Index rows, Eigen::Index cols) {
+        RowMatrixXf::resize(rows, cols);
+        x_coords.resize(cols);
+        y_coords.resize(rows);
+    }
+
 public:
     Eigen::VectorXf y_coords; // Row coordinates of center, V-direction
     Eigen::VectorXf x_coords; // Column coordinates of center, U-direction
