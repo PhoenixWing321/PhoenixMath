@@ -27,4 +27,5 @@ struct StreamTools {
     }
 };
 } // namespace Phoenix
+
 #endif

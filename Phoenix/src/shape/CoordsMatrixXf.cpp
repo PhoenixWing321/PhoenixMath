@@ -5,29 +5,46 @@
 namespace Phoenix {
 
 //------------------------------------------------------
-void CoordsMatrixXf::dump(int format) const {
-    if (format == 0) {
+void CoordsMatrixXf::dump(int format, int rows0, size_t cols0) const {
+    if (rows0 > rows()) rows0 = rows();
+    if (cols0 > cols()) cols0 = cols();
 
-        std::cout << (*this) << std::endl;
+    std::cout << std::fixed << std::setprecision(3);
+
+    // Output dimensions
+    std::cout << Color::GREEN << rows0 << "\t" << Color::YELLOW << cols0 << "\n";
+
+    if (format == 0) {
+        // Output x coordinates row
+        std::cout << Color::GREEN << "y" << Color::MAGENTA << " \\ " << Color::YELLOW << "x";
+
+        for (int j = 0; j < cols0; ++j) {
+            std::cout << "\t" << x_coords(j);
+        }
+        std::cout << "\n";
+
+        // Output y coordinates and matrix values
+        for (int i = 0; i < rows0; ++i) {
+            std::cout << Color::GREEN << y_coords(i) << Color::MAGENTA;
+            for (int j = 0; j < cols0; ++j) {
+                std::cout << "\t" << coeff(i, j);
+            }
+            std::cout << "\n";
+        }
     }
     else {
-        // Set new format: fixed width, right-aligned, 1 decimal place
-        std::cout << std::fixed << std::setprecision(3);
-
-        // Output dimensions
-        std::cout << Color::GREEN << rows() << "\t" << Color::YELLOW << cols() << "\n";
 
         // Output y coordinates
         std::cout << Color::YELLOW << "x" << Color::MAGENTA << " \\ " << Color::GREEN << "y";
-        for (int y = 0; y < rows(); ++y) {
+        for (int y = 0; y < rows0; ++y) {
             std::cout << "\t" << y_coords(y);
         }
         std::cout << "\n";
 
         // Output y coordinates and matrix values
-        for (int x = 0; x < cols(); ++x) {
+        for (int x = 0; x < cols0; ++x) {
             std::cout << Color::YELLOW << x_coords(x) << Color::MAGENTA;
-            for (int y = 0; y < rows(); ++y) {
+            for (int y = 0; y < rows0; ++y) {
                 std::cout << "\t" << coeff(y, x);
             }
             std::cout << "\n";

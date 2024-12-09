@@ -4,6 +4,7 @@
 namespace Phoenix {
 // error code, 0 is ok, other is error code
 typedef int Code;
+typedef int Count;
 
 #define PW_SUCCEEDED(Status) ((unsigned int)(Status) == 0)
 

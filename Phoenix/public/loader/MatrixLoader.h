@@ -1,8 +1,12 @@
 #ifndef PHOENIX_MatrixLoader_H
 #define PHOENIX_MatrixLoader_H
 
-#include "shape/CoordsMatrixXf.h"
+// std
 #include <iostream>
+
+// Phoenix
+#include "shape/CoordsMatrixXf.h"
+#include "utility/Code.hpp"
 
 namespace Phoenix {
 
@@ -35,32 +39,32 @@ public:
      * @param path File path
      * @return int Error code
      */
-    int load(CoordsMatrixXf& matrix, const std::string& path,
-             Format format = FORMAT_ROW_DEFAULT) const;
+    Code load(CoordsMatrixXf& matrix, const std::string& path,
+              Format format = FORMAT_ROW_DEFAULT) const;
 
     /**
      * @brief Load from stringstream
      * @param stream stringstream object to load from
      * @return int Error code
      */
-    int load(CoordsMatrixXf& matrix, std::stringstream& stream,
-             Format format = FORMAT_ROW_DEFAULT) const;
+    Code parse(CoordsMatrixXf& matrix, std::stringstream& stream,
+               Format format = FORMAT_ROW_DEFAULT) const;
 
     /**
      * @brief Save to file
      * @param path File path
      * @return int Error code
      */
-    int save(CoordsMatrixXf& matrix, const std::string& path,
-             Format format = FORMAT_ROW_DEFAULT) const;
+    Code save(CoordsMatrixXf& matrix, const std::string& path,
+              Format format = FORMAT_ROW_DEFAULT) const;
 
     /**
      * @brief Save to stringstream
      * @param stream stringstream object to save to
      * @return int Error code
      */
-    int save(CoordsMatrixXf& matrix, std::stringstream& stream,
-             Format format = FORMAT_ROW_DEFAULT) const;
+    Code serialize(CoordsMatrixXf& matrix, std::stringstream& stream,
+                   Format format = FORMAT_ROW_DEFAULT) const;
 
 public:
     int break_count{8}; // break count for delimiter
