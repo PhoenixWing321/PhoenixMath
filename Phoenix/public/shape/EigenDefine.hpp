@@ -9,5 +9,10 @@ namespace Phoenix {
  */
 using RowMatrixXf = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
+struct IRowMatrixXf : public RowMatrixXf {
+    IRowMatrixXf(int rows = 0, int cols = 0)
+        : RowMatrixXf(rows, cols){};
+    virtual ~IRowMatrixXf() = default;
+};
 } // namespace Phoenix
 #endif // PHOENIX_EigenDefine_H

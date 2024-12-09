@@ -30,7 +30,8 @@ public:
 
     enum Format {
         FORMAT_ROW_DEFAULT     = 0, // default row-major format
-        FORMAT_COL_COORD_FIRST = 1  // a kind of column-major format
+        FORMAT_COL_COORD_FIRST = 1, // a kind of column-major format
+        FORMAT_PPM             = 2  // a kind of PPM format
     };
 
 public:
@@ -57,6 +58,13 @@ public:
      */
     Code save(CoordsMatrixXf& matrix, const std::string& path,
               Format format = FORMAT_ROW_DEFAULT) const;
+
+    /**
+     * @brief Save to PPM file
+     * @param path File path
+     * @return int Error code
+     */
+    Code save_ppm(CoordsMatrixXf& matrix, const std::string& path) const;
 
     /**
      * @brief Save to stringstream

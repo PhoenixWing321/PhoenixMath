@@ -5,7 +5,8 @@
 
 #include "../inside.hpp"
 
-using namespace Phoenix;
+namespace Phoenix {
+namespace Test {
 
 TEST_CASE("CoordsMatrixXf fill_pattern test", "[matrix]") {
     SECTION("Default constructor") {
@@ -189,3 +190,6 @@ TEST_CASE("CoordsMatrixXf data validation", "[CoordsMatrixXf]") {
         }
     }
 }
+
+} // namespace Test
+} // namespace Phoenix

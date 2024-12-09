@@ -8,14 +8,14 @@
 
 namespace Phoenix {
 
-class CoordsMatrixXf : public RowMatrixXf {
+class CoordsMatrixXf : public IRowMatrixXf {
 public:
     CoordsMatrixXf()
-        : RowMatrixXf(0, 0)
+        : IRowMatrixXf(0, 0)
         , x_coords(0)
         , y_coords(0) {}
 
-    ~CoordsMatrixXf() = default;
+    virtual ~CoordsMatrixXf() = default;
 
 public:
     // Fill with sample data

@@ -1,11 +1,9 @@
 #ifndef PHOENIX_Code_H
 #define PHOENIX_Code_H
 
-namespace Phoenix {
-// error code, 0 is ok, other is error code
-typedef int Code;
-typedef int Count;
+#include "utility/PhoenixDefine.hpp"
 
+namespace Phoenix {
 #define PW_SUCCEEDED(Status) ((unsigned int)(Status) == 0)
 
 #define PW_FAILED(Status) ((unsigned int)(Status) > 0)

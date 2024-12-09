@@ -20,3 +20,7 @@ add_executable(test_CoordsMatrixXf "test_CoordsMatrixXf.cpp")
 target_link_libraries(test_CoordsMatrixXf PhoenixMath)
 add_test(NAME "test_CoordsMatrixXf" COMMAND test_CoordsMatrixXf)
 
+# === test ===
+add_executable(test_MatrixFormatHandler "test_MatrixFormatHandler.cpp")
+target_link_libraries(test_MatrixFormatHandler PhoenixMath)
+add_test(NAME "test_MatrixFormatHandler" COMMAND test_MatrixFormatHandler)
