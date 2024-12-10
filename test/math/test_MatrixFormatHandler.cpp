@@ -5,6 +5,7 @@
 #include <filesystem>
 
 // Phoenix
+#include "loader/CoordsMatrixXfLoader.h"
 #include "loader/MatrixFormatHandler.hpp"
 #include "loader/PpmLoader.h"
 #include "shape/CoordsMatrixXf.h"
@@ -12,61 +13,108 @@
 namespace Phoenix {
 namespace Test {
 
-// Mock format class for testing
-class MockFormat : public IMatrixLoader {
-public:
-    Code load(IRowMatrixXf& matrix, const std::string& path) override {
-        // Record that load was called
-        loadCalled = true;
-        return Code(ErrorCode::SUCCESS);
-    }
+TEST_CASE("MatrixFormatHandler Basic Tests", "[loader]") {
+    // 设置格式
+    auto loader = std::make_unique<PpmLoader>(ColorRGB::LUMINANCE);
+    // Test constructor with initial format
+    MatrixFormatHandler handler(std::move(loader));
 
-    Code save(IRowMatrixXf& matrix, const std::string& path) override {
-        // Record that save was called
-        saveCalled = true;
-        return Code(ErrorCode::SUCCESS);
-    }
-
-    bool loadCalled = false;
-    bool saveCalled = false;
-};
-
-TEST_CASE("MatrixFormatHandler Basic Tests", "[MatrixFormatHandler]") {
     SECTION("Constructor and Format Setting") {
-
-        auto loader = std::make_unique<PpmLoader>();
-        // Test constructor with initial format
-        MatrixFormatHandler handler(std::move(loader));
-
         // Test setting new format
-        auto newFormat = std::make_unique<MockFormat>();
+        auto newFormat = std::make_unique<CoordsMatrixXfLoader>();
         handler.setFormat(std::move(newFormat));
     }
+}
 
-    SECTION("Save Operation") {
-        auto loader = std::make_unique<PpmLoader>(PpmLoader::HEATMAP);
+TEST_CASE("MatrixFormatHandler Color Format Tests", "[loader]") {
+    CoordsMatrixXf matrix;
+    Code           code;
 
-        // 设置格式
-        MatrixFormatHandler handler(std::move(loader));
-        CoordsMatrixXf      matrix;
-        matrix.fill_pattern();
+    const std::vector<ColorRGB::ColorFormat> formats = {ColorRGB::GRAY_SCALE, ColorRGB::HEAT_MAP,
+                                                        ColorRGB::LUMINANCE};
 
-        auto code = handler.save(matrix, "test_PpmLoader_save.ppm");
+    const std::vector<std::string> format_names = {"GRAY_SCALE", "HEAT_MAP", "LUMINANCE"};
 
-        // Verify that save was called on the format
-        REQUIRE(code == 0);
+    // 测试所有颜色方案
+    SECTION("Test all color formats") {
+        for (size_t i = 0; i < formats.size(); ++i) {
+            SECTION(format_names[ i ]) {
+                // 为每种格式创建新的handler
+                auto                loader = std::make_unique<PpmLoader>(formats[ i ]);
+                MatrixFormatHandler handler(std::move(loader));
+
+                // 保存操作
+                matrix.fill_pattern(300, 400);
+                std::cout << "Original matrix pattern for " << format_names[ i ] << ":"
+                          << std::endl;
+                matrix.dump();
+
+                std::string filename = "test_PpmLoader_" + format_names[ i ] + ".ppm";
+                code                 = handler.save(matrix, filename);
+                REQUIRE(code == 0);
+
+                // 清空矩阵
+                matrix.setZero();
+
+                // 加载操作
+                code = handler.load(matrix, filename);
+                std::cout << "Matrix loaded from " << format_names[ i ] << " format:" << std::endl;
+                matrix.dump();
+                REQUIRE(code == 0);
+            }
+        }
     }
 
-    SECTION("Load Operation") {
-        auto loader = std::make_unique<PpmLoader>();
-        // Test constructor with initial format
+    SECTION("Format conversion test") {
+        // 测试格式转换：保存为一种格式，用另一种格式加载
+        const std::vector<ColorRGB::ColorFormat> formats = {
+            ColorRGB::GRAY_SCALE, ColorRGB::HEAT_MAP, ColorRGB::LUMINANCE};
+
+        // 先用GRAY_SCALE保存
+        {
+            auto                loader = std::make_unique<PpmLoader>(ColorRGB::GRAY_SCALE);
+            MatrixFormatHandler handler(std::move(loader));
+            matrix.fill_pattern(300, 400);
+            code = handler.save(matrix, "test_conversion_source.ppm");
+            REQUIRE(code == 0);
+        }
+
+        // 用其他格式加载
+        for (auto format : formats) {
+            if (format == ColorRGB::GRAY_SCALE) continue;
+
+            SECTION("Converting from GRAY_SCALE to " + std::to_string(static_cast<int>(format))) {
+                auto                loader = std::make_unique<PpmLoader>(format);
+                MatrixFormatHandler handler(std::move(loader));
+
+                code = handler.load(matrix, "test_conversion_source.ppm");
+                REQUIRE(code == 0);
+
+                std::string filename =
+                    "test_conversion_to_" + std::to_string(static_cast<int>(format)) + ".ppm";
+                code = handler.save(matrix, filename);
+                REQUIRE(code == 0);
+            }
+        }
+    }
+
+    SECTION("Dynamic format switching") {
+        // 测试动态切换格式
+        auto                loader = std::make_unique<PpmLoader>(ColorRGB::GRAY_SCALE);
         MatrixFormatHandler handler(std::move(loader));
 
-        IRowMatrixXf matrix;
-        auto         code = handler.load(matrix, "test_PpmLoader_save.ppm");
+        matrix.fill_pattern(300, 400);
 
-        // Verify that load was called on the format
-        REQUIRE(code == IMatrixLoader::NOT_IMPLEMENTED);
+        // 依次使用不同格式保存同一个矩阵
+        for (auto format : {ColorRGB::GRAY_SCALE, ColorRGB::HEAT_MAP, ColorRGB::LUMINANCE}) {
+            auto new_loader = std::make_unique<PpmLoader>(format);
+            handler.setFormat(std::move(new_loader));
+
+            std::string filename =
+                "test_dynamic_switch_" + std::to_string(static_cast<int>(format)) + ".ppm";
+            code = handler.save(matrix, filename);
+            REQUIRE(code == 0);
+        }
     }
 }
 

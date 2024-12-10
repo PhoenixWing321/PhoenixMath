@@ -24,3 +24,8 @@ add_test(NAME "test_CoordsMatrixXf" COMMAND test_CoordsMatrixXf)
 add_executable(test_MatrixFormatHandler "test_MatrixFormatHandler.cpp")
 target_link_libraries(test_MatrixFormatHandler PhoenixMath)
 add_test(NAME "test_MatrixFormatHandler" COMMAND test_MatrixFormatHandler)
+
+# === test ===
+add_executable(test_ColorRGB "test_ColorRGB.cpp")
+target_link_libraries(test_ColorRGB PhoenixMath)
+add_test(NAME "test_ColorRGB" COMMAND test_ColorRGB)

@@ -20,29 +20,23 @@ TEST_CASE("CoordsMatrixXf fill_pattern test", "[matrix]") {
     SECTION("fill_pattern") {
 
         CoordsMatrixXf matrix;
-        matrix.fill_pattern();
+        int            rows = 10, cols = 6;
+        matrix.fill_pattern(rows, cols);
+        // matrix.dump(0);
 
         // Check dimensions
-        CHECK(matrix.rows() == 6);
-        CHECK(matrix.cols() == 11);
-        CHECK(matrix.x_coords.size() == 11);
-        CHECK(matrix.y_coords.size() == 6);
-
-        // Check x coordinates
-        CHECK(matrix.x_coords(0) == 0.0f);
-        CHECK(matrix.x_coords(1) == 2.0f);
-        CHECK(matrix.x_coords(10) == 90.0f);
-
-        // Check y coordinates
-        CHECK(matrix.y_coords(0) == 0.0f);
-        CHECK(matrix.y_coords(1) == 1.0f);
-        CHECK(matrix.y_coords(5) == 45.0f);
+        CHECK(matrix.rows() == rows);
+        CHECK(matrix.cols() == cols);
+        CHECK(matrix.x_coords.size() == cols);
+        CHECK(matrix.y_coords.size() == rows);
 
         // Check some matrix values
-        CHECK(matrix(0, 0) == 0.0f);   // Top-left
-        CHECK(matrix(0, 10) == 18.0f); // Top-right
-        CHECK(matrix(5, 10) == 20.0f); // Bottom-right
-        CHECK(matrix(2, 3) == 7.5f);   // Middle value
+        CHECK(matrix(0, 0) == 0.0f);                                // Top-left
+        CHECK(matrix(0, cols - 1) == static_cast<float>(cols - 1)); // Top-right
+        CHECK(matrix(rows - 1, cols - 1) ==
+              static_cast<float>(rows - 1 + cols - 1)); // Bottom-right
+        CHECK(matrix(rows / 2, cols / 2) ==
+              static_cast<float>(rows / 2 + cols / 2)); // Middle value
 
         // 检查行方向单调性
         {

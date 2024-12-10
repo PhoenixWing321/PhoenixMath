@@ -8,8 +8,5 @@ typedef int Code;
 
 typedef int Count;
 
-struct ColorRGB {
-    unsigned char r, g, b;
-};
 } // namespace Phoenix
 #endif // PHOENIX_PhoenixDefine_H

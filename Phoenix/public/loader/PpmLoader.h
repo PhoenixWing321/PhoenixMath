@@ -2,14 +2,16 @@
 #define PHOENIX_PpmLoader_H
 
 #include "loader/IMatrixLoader.hpp"
+#include "utility/ColorRGB.h"
 
 namespace Phoenix {
 
 // 2. 实现具体的策略类
 class PpmLoader : public IMatrixLoader {
 public:
-    PpmLoader() = default;
-    PpmLoader(int sub_type)
+    PpmLoader()
+        : sub_type(ColorRGB::HEAT_MAP) {}
+    PpmLoader(ColorRGB::ColorFormat sub_type)
         : sub_type(sub_type) {}
 
     virtual ~PpmLoader() = default;
@@ -19,13 +21,8 @@ public:
 
     Code save(IRowMatrixXf& matrix, const std::string& path) override;
 
-    enum SubType {
-        NORMAL  = 0, // black to white
-        HEATMAP = 1, // heatmap
-    };
-
 public:
-    int sub_type{NORMAL};
+    ColorRGB::ColorFormat sub_type;
 };
 
 } // namespace Phoenix

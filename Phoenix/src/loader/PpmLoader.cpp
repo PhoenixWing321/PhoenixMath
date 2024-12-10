@@ -1,4 +1,3 @@
-
 // std
 #include <algorithm>
 #include <filesystem>
@@ -7,72 +6,96 @@
 
 // Phoenix
 #include "loader/PpmLoader.h"
+#include "shape/CoordsMatrixXf.h"
 #include "utility/PhoenixDefine.hpp"
 
 namespace fs = std::filesystem;
 
 // Phoenix
-#define PHOENIX_DEBUG_INFO
+// #define PHOENIX_DEBUG_INFO
 #include "utility/DebugMacro.h"
 
 namespace Phoenix {
 
-// Helper function to convert value to RGB color using heat map
-ColorRGB valueToHeatMapColor(float value) {
-    // Ensure value is in [0,1]
-    value = std::clamp(value, 0.0f, 1.0f);
-
-    ColorRGB color;
-    // Blue to Cyan to Green to Yellow to Red
-    if (value < 0.25f) {
-        // Blue to Cyan (0.0 - 0.25)
-        float t = value * 4;
-        color.r = 0;
-        color.g = static_cast<unsigned char>(255 * t);
-        color.b = 255;
-    }
-    else if (value < 0.5f) {
-        // Cyan to Green (0.25 - 0.5)
-        float t = (value - 0.25f) * 4;
-        color.r = 0;
-        color.g = 255;
-        color.b = static_cast<unsigned char>(255 * (1 - t));
-    }
-    else if (value < 0.75f) {
-        // Green to Yellow (0.5 - 0.75)
-        float t = (value - 0.5f) * 4;
-        color.r = static_cast<unsigned char>(255 * t);
-        color.g = 255;
-        color.b = 0;
-    }
-    else {
-        // Yellow to Red (0.75 - 1.0)
-        float t = (value - 0.75f) * 4;
-        color.r = 255;
-        color.g = static_cast<unsigned char>(255 * (1 - t));
-        color.b = 0;
-    }
-    return color;
-}
-
+//----------------------------------
 Code PpmLoader::load(IRowMatrixXf& matrix, const std::string& path) {
-    // PPM加载实现
-    // TODO: 实现PPM文件的加载逻辑
-    PHOENIX_DEBUG(std::cout << "PpmLoader::load NOT_IMPLEMENTED" << std::endl;)
-
-    return NOT_IMPLEMENTED;
-}
-
-Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
-    // PPM保存实现
-    // TODO: 实现PPM文件的保存逻辑
-    // PHOENIX_DEBUG(std::cout << "PpmLoader::save NOT_IMPLEMENTED :" << path << std::endl)
-
-    PHOENIX_DEBUG(std::cout << "save path: " << fs::absolute(path) << std::endl;)
-    std::ofstream file(path, std::ios::binary);
+    // 是一个 RAII (Resource Acquisition Is Initialization)
+    // 类型的对象，当它的生命周期结束时（即函数返回时），会自动调用析构函数，关闭文件流。
+    std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) {
         return Code(ErrorCode::FILE_NOT_OPEN);
     }
+
+    // Read PPM header
+    std::string format;
+    int         width, height, maxVal;
+
+    // Read format identifier (P6)
+    file >> format;
+    if (format != "P6") {
+        return Code(ErrorCode::INVALID_FORMAT);
+    }
+
+    // Skip comments
+    char line[ 1024 ];
+    while (file.peek() == '#') {
+        file.getline(line, 1024);
+    }
+
+    // Read dimensions
+    file >> width >> height;
+    if (file.fail()) {
+        return Code(ErrorCode::READ_ERROR);
+    }
+
+    // Read max color value
+    file >> maxVal;
+    if (file.fail() || maxVal != 255) {
+        return Code(ErrorCode::INVALID_FORMAT);
+    }
+
+    // Skip single whitespace character after maxVal
+    file.get();
+
+    // Resize matrix to match image dimensions
+    matrix.resize(height, width);
+
+    CoordsMatrixXf* coords = dynamic_cast<CoordsMatrixXf*>(&matrix);
+    // 如果矩阵是CoordsMatrixXf，则设置x和y坐标
+    if (coords) {
+        // set x coords
+
+        for (int y = 0; y < coords->y_coords.size(); ++y) {
+            coords->y_coords[ y ] = static_cast<float>(y);
+        }
+
+        for (int x = 0; x < coords->x_coords.size(); ++x) {
+            coords->x_coords[ x ] = static_cast<float>(x);
+        }
+    }
+
+    // Read pixel data
+    ColorRGB color; // RGB buffer
+    char*    buffer = reinterpret_cast<char*>(&color);
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            // Read RGB values
+            file.read(buffer, 3);
+            if (file.fail()) return READ_ERROR;
+
+            matrix(i, j) = ColorRGB::color_to_ratio(color, sub_type);
+        }
+    }
+
+    file.close();
+    return SUCCESS;
+}
+//----------------------------------
+Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
+    // PHOENIX_DEBUG(std::cout << "save path: " << fs::absolute(path) << std::endl;)
+    // PPM保存实现
+    std::ofstream file(path, std::ios::binary);
+    if (!file.is_open()) return FILE_NOT_OPEN;
 
     auto rows = matrix.rows();
     auto cols = matrix.cols();
@@ -83,50 +106,28 @@ Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
     file << "255\n";
 
     // 检索最大值用于归一化
-    float max_value = matrix.maxCoeff();
-    float min_value = matrix.minCoeff();
-    float range     = max_value - min_value;
+    float    max_value = matrix.maxCoeff();
+    ColorRGB color;
+    char*    pixel = reinterpret_cast<char*>(&color);
 
     // 写入像素数据
-    switch (sub_type) {
-    case 0: {
-        float ratio = 255.0f / max_value;
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
-                unsigned char pixel =
-                    static_cast<unsigned char>(std::clamp(matrix(i, j) * ratio, 0.0f, 255.0f));
-                file.write(reinterpret_cast<char*>(&pixel), 1);
-                file.write(reinterpret_cast<char*>(&pixel), 1);
-                file.write(reinterpret_cast<char*>(&pixel), 1);
-            }
+    const float ratio = 1.f / max_value; // 归一化系数
+    for (int i = 0; i < rows; ++i) {
+        PHOENIX_DEBUG(std::cout << std::setw(5) << i << " |")
+        for (int j = 0; j < cols; ++j) {
+            // 归一化并转换为RGB值
+            color = ColorRGB::ratio_to_color(matrix(i, j) * ratio, sub_type);
+            file.write(pixel, 3); // 写入3个字节
+            PHOENIX_DEBUG(std::cout << " " << std::setw(3) << "(" << (int)color.r << ","
+                                    << (int)color.g << "," << (int)color.b << ")")
         }
-    } break;
-    case 1: {
-        ColorRGB color;
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
-                // Normalize value to [0,1]
-                float normalized = (matrix(i, j) - min_value) / range;
-                color            = valueToHeatMapColor(normalized);
-
-                // Write RGB values
-                file.write(reinterpret_cast<char*>(&color.r), 1);
-                file.write(reinterpret_cast<char*>(&color.g), 1);
-                file.write(reinterpret_cast<char*>(&color.b), 1);
-            }
-        }
-    } break;
-    default:
-        break;
+        PHOENIX_DEBUG(std::cout << std::endl;)
     }
 
-    if (file.fail()) {
-        file.close();
-        return WRITE_ERROR;
-    }
+    if (file.fail()) return WRITE_ERROR;
 
     file.close();
-    return 0;
+    return SUCCESS;
 }
 
 } // namespace Phoenix

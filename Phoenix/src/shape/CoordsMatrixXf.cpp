@@ -13,6 +13,8 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
     std::streamsize         oldPrecision = std::cout.precision();
     std::cout << std::defaultfloat;
 
+    static int width = 10;
+
     // Output dimensions
     std::cout << Color::GREEN << rows() << Color::RESET << " x " << Color::YELLOW << cols()
               << Color::RESET << ((format == 0) ? "\tRow-major" : "\tColumn-major") << std::endl;
@@ -20,7 +22,7 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
     if (format == 0) {
         std::cout << Color::YELLOW << "\t";
         for (int x = 0; x < cols0; ++x) {
-            std::cout << "\t" << x;
+            std::cout << "\t" << std::setw(width) << x;
         }
         if (cols0 < cols()) std::cout << "\t...";
         std::cout << std::endl;
@@ -29,7 +31,7 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
                   << "y" << Color::MAGENTA << " \\ " << Color::YELLOW << "x";
 
         for (int x = 0; x < cols0; ++x) {
-            std::cout << "\t" << x_coords(x);
+            std::cout << "\t" << std::setw(width) << x_coords(x);
         }
         std::cout << std::endl;
 
@@ -37,7 +39,7 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
         for (int y = 0; y < rows0; ++y) {
             std::cout << Color::GREEN << y << "\t" << y_coords(y) << Color::MAGENTA;
             for (int x = 0; x < cols0; ++x) {
-                std::cout << "\t" << coeff(y, x);
+                std::cout << "\t" << std::setw(width) << coeff(y, x);
             }
             std::cout << std::endl;
         }
@@ -62,7 +64,7 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
         for (int x = 0; x < cols0; ++x) {
             std::cout << Color::YELLOW << x << "\t" << x_coords(x) << Color::MAGENTA;
             for (int y = 0; y < rows0; ++y) {
-                std::cout << "\t" << coeff(y, x);
+                std::cout << "\t" << std::setw(width) << coeff(y, x);
             }
             std::cout << std::endl;
         }
@@ -75,22 +77,54 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
     std::cout.precision(oldPrecision);
 }
 //------------------------------------------------------
-void CoordsMatrixXf::fill_pattern() {
+void CoordsMatrixXf::fill_pattern(int rows, int cols) {
+    if (rows == 0 || cols == 0) {
+        rows = 10;
+        cols = 6;
+    }
+
     // Set dimensions
-    CoordsMatrixXf::resize(6, 11);
+    CoordsMatrixXf::resize(rows, cols);
 
     // Set x coordinates
-    x_coords << 0, 2, 4, 10, 20, 40, 60, 80, 85, 88, 90;
+    // 根据 cols 的值自动生成非均匀分布的 x 坐标
+    for (int i = 0; i < cols; ++i) {
+        if (i < cols / 4) {
+            // 前四分之一区域密集
+            x_coords[ i ] = static_cast<float>(i * 2); // 小步长
+        }
+        else if (i < 3 * cols / 4) {
+            // 中间一半区域稀疏
+            x_coords[ i ] = static_cast<float>(10 + (i - cols / 4) * 5); // 大步长
+        }
+        else {
+            // 后四分之一区域密集
+            x_coords[ i ] = static_cast<float>(50 + (i - 3 * cols / 4) * 2); // 小步长
+        }
+    }
 
     // Set y coordinates
-    y_coords << 0, 1, 5, 10, 30, 45;
+    // 根据 rows 的值自动生成非均匀分布的 y 坐标
+    for (int i = 0; i < rows; ++i) {
+        if (i < rows / 4) {
+            // 前四分之一区域密集
+            y_coords[ i ] = static_cast<float>(i * 1); // 小步长
+        }
+        else if (i < 3 * rows / 4) {
+            // 中间一半区域稀疏
+            y_coords[ i ] = static_cast<float>(5 + (i - rows / 4) * 3); // 大步长
+        }
+        else {
+            // 后四分之一区域密集
+            y_coords[ i ] = static_cast<float>(20 + (i - 3 * rows / 4) * 1); // 小步长
+        }
+    }
 
     // Set matrix values
-    (*this) << 0.0f, 0.5f, 1.2f, 3.4f, 8.1f, 9.2f, 9.8f, 10.0f, 12.0f, 15.0f, 18.0f, // Row 0
-        0.3f, 1.1f, 2.5f, 4.8f, 9.3f, 10.0f, 11.0f, 13.0f, 14.0f, 16.0f, 19.0f,      // Row 1
-        1.5f, 2.8f, 4.2f, 7.5f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 19.0f,     // Row 2
-        3.2f, 4.5f, 6.8f, 11.0f, 15.0f, 16.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f,    // Row 3
-        8.5f, 9.2f, 11.0f, 14.0f, 17.0f, 18.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f,   // Row 4
-        12.0f, 13.0f, 15.0f, 16.0f, 18.0f, 19.0f, 19.0f, 20.0f, 20.0f, 20.0f, 20.0f; // Row 5
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            coeffRef(i, j) = static_cast<float>(i + j); // 简单的线性关系
+        }
+    }
 }
 } // namespace Phoenix

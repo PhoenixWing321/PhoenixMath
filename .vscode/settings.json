@@ -126,7 +126,9 @@
                 "xutility": "cpp",
                 "dense": "cpp",
                 "eigenvalues": "cpp",
-                "tensor": "cpp"
+                "tensor": "cpp",
+                "coroutine": "cpp",
+                "resumable": "cpp"
         },
         "cSpell.words": [
                 "AABB",
