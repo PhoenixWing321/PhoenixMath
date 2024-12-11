@@ -23,6 +23,10 @@ public:
     Code save(IRowMatrixXf& matrix, const std::string& path) {
         return format_->save(matrix, path);
     }
+    // 在MatrixFormatHandler中添加新方法
+    Code save_polar(IRowMatrixXf& matrix, const std::string& path) {
+        return format_->save_polar(matrix, path);
+    }
 
 private:
     std::unique_ptr<IMatrixLoader> format_;

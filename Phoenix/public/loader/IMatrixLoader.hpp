@@ -11,6 +11,9 @@ class IMatrixLoader {
 public:
     virtual Code load(IRowMatrixXf& matrix, const std::string& path) = 0;
     virtual Code save(IRowMatrixXf& matrix, const std::string& path) = 0;
+    virtual Code save_polar(IRowMatrixXf& matrix, const std::string& path) {
+        return NOT_IMPLEMENTED;
+    };
 
 public:
     // Error codes

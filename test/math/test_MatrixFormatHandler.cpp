@@ -117,6 +117,16 @@ TEST_CASE("MatrixFormatHandler Color Format Tests", "[loader]") {
         }
     }
 }
+// 在测试代码中
+TEST_CASE("Polar Plot Test") {
+    CoordsMatrixXf matrix;
+    matrix.fill_pattern(50, 360);
 
+    auto                loader = std::make_unique<PpmLoader>(ColorRGB::HEAT_MAP);
+    MatrixFormatHandler handler(std::move(loader));
+
+    Code code = handler.save_polar(matrix, "polar_plot.ppm");
+    REQUIRE(code == 0);
+}
 } // namespace Test
 } // namespace Phoenix

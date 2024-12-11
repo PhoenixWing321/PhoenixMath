@@ -21,6 +21,8 @@ public:
 
     Code save(IRowMatrixXf& matrix, const std::string& path) override;
 
+    Code save_polar(IRowMatrixXf& matrix, const std::string& path) override;
+
 public:
     ColorRGB::ColorFormat sub_type;
 };

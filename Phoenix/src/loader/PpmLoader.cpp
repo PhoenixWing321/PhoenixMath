@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#define _USE_MATH_DEFINES // 必须在包含 cmath 之前定义
+#include <cmath>
 
 // Phoenix
 #include "loader/PpmLoader.h"
@@ -10,6 +12,8 @@
 #include "utility/PhoenixDefine.hpp"
 
 namespace fs = std::filesystem;
+
+#define FLT_PI 3.14159265358979323846f
 
 // Phoenix
 // #define PHOENIX_DEBUG_INFO
@@ -125,6 +129,99 @@ Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
     }
 
     if (file.fail()) return WRITE_ERROR;
+
+    file.close();
+    return SUCCESS;
+}
+
+Code PpmLoader::save_polar(IRowMatrixXf& matrix, const std::string& path) {
+    if (matrix.rows() == 0 || matrix.cols() == 0) return INVALID_DIMENSIONS;
+
+    // 创建一个圆形图像
+    int image_size = matrix.cols() * 2; // 图像大小
+    int center_x   = image_size / 2;
+    int center_y   = image_size / 2;
+    int max_radius = (image_size - 40) / 2; // 留出边距
+
+    // 创建输出图像矩阵
+    Eigen::MatrixXf polar_image = Eigen::MatrixXf::Zero(image_size, image_size);
+
+    // 获取原始矩阵的维度
+    int rows = matrix.rows(); // 对应极坐标中的r (0-90度)
+    int cols = matrix.cols(); // 对应极坐标中的θ (0-360度)
+
+    // 对每个像素进行极坐标映射
+    for (int y = 0; y < image_size; ++y) {
+        for (int x = 0; x < image_size; ++x) {
+            // 计算相对于中心的位置
+            float dx = x - center_x;
+            float dy = y - center_y;
+
+            // 计算极坐标
+            float radius = std::sqrt(dx * dx + dy * dy);
+            float theta  = std::atan2(dy, dx);
+
+            // 转换为度数
+            theta = theta * 180.0f / FLT_PI;
+            if (theta < 0) theta += 360.0f;
+
+            // 将radius映射到矩阵的行索引 (0-90度)
+            float r_normalized = radius / max_radius * 90.0f;
+
+            // 如果在有效范围内
+            if (radius <= max_radius) {
+                // 计算在原始矩阵中的位置（需要插值）
+                float row_f = r_normalized * (rows - 1) / 90.0f;
+                float col_f = theta * (cols - 1) / 360.0f;
+
+                // 双线性插值
+                int row = static_cast<int>(row_f);
+                int col = static_cast<int>(col_f);
+
+                if (row < rows - 1 && col < cols - 1) {
+                    float t = row_f - row;
+                    float s = col_f - col;
+
+                    float value =
+                        (1 - t) * (1 - s) * matrix(row, col) + t * (1 - s) * matrix(row + 1, col) +
+                        (1 - t) * s * matrix(row, col + 1) + t * s * matrix(row + 1, col + 1);
+
+                    polar_image(y, x) = value;
+                }
+            }
+        }
+    }
+
+    // 保存为PPM文件
+    std::ofstream file(path, std::ios::binary);
+    if (!file.is_open()) return FILE_NOT_OPEN;
+
+    // 写入PPM头部信息
+    file << "P6\n";
+    file << image_size << " " << image_size << "\n";
+    file << "255\n";
+
+    // 写入像素数据
+    float    max_value = polar_image.maxCoeff();
+    ColorRGB color;
+    char*    pixel = reinterpret_cast<char*>(&color);
+
+    for (int i = 0; i < image_size; ++i) {
+        for (int j = 0; j < image_size; ++j) {
+            if (std::sqrt(std::pow(i - center_y, 2) + std::pow(j - center_x, 2)) <= max_radius) {
+                // 在圆内的像素
+                color = ColorRGB::ratio_to_color(polar_image(i, j) / max_value, sub_type);
+            }
+            else {
+                // 圆外的像素设为白色
+                color = ColorRGB{255, 255, 255};
+            }
+            file.write(pixel, 3);
+        }
+    }
+
+    // 添加刻度和网格（可选）
+    // TODO: 添加角度刻度和径向网格线
 
     file.close();
     return SUCCESS;
