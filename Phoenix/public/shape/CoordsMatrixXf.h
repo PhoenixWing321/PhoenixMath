@@ -1,7 +1,7 @@
 #ifndef PHOENIX_CoordsMatrixXf_H
 #define PHOENIX_CoordsMatrixXf_H
 
-#include "shape/EigenDefine.hpp"
+#include "shape/IRowMatrixXf.hpp"
 #include "utility/ColorOutput.h"
 #include <iomanip> // For std::setw and std::setprecision
 #include <iostream>

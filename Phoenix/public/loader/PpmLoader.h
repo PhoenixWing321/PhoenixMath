@@ -16,12 +16,28 @@ public:
 
     virtual ~PpmLoader() = default;
 
+public: // override
+    /**
+     * @brief Load from file
+     * @param matrix Matrix to load
+     * @param path File path
+     * @param format Format of the matrix or file
+     * @return int Error code
+     */
+    virtual int load(IRowMatrixXf* matrix, const std::string& path, int format) const override;
+
+    /**
+     * @brief Save to file
+     * @param matrix Matrix to save
+     * @param path File path
+     * @param format Format of the matrix or file
+     * @return int Error code
+     */
+    virtual int save(const IRowMatrixXf* matrix, const std::string& path,
+                     int format) const override;
+
 public:
-    Code load(IRowMatrixXf& matrix, const std::string& path) override;
-
-    Code save(IRowMatrixXf& matrix, const std::string& path) override;
-
-    Code save_polar(IRowMatrixXf& matrix, const std::string& path) override;
+    int save_polar(const IRowMatrixXf* matrix, const std::string& path) const;
 
 public:
     ColorRGB::ColorFormat sub_type;

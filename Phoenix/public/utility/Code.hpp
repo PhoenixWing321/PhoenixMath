@@ -4,6 +4,7 @@
 #include "utility/PhoenixDefine.hpp"
 
 namespace Phoenix {
+
 #define PW_SUCCEEDED(Status) ((unsigned int)(Status) == 0)
 
 #define PW_FAILED(Status) ((unsigned int)(Status) > 0)

@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
-#include "loader/MatrixLoader.h"
+
+#include "loader/CoordsMatrixXfLoader.h"
+#include "loader/MatrixLoaderHandler.hpp"
 #include "shape/CoordsMatrixXf.h"
 
 #include "../inside.hpp"
@@ -71,18 +73,18 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
-        MatrixLoader loader;
+        CoordsMatrixXfLoader loader;
         // Save to temporary file
         const std::string temp_file_format = "CoordsMatrixXf_format_0.txt";
         std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
         std::cout << " Display: (rows,cols)= \n", matrix1.dump(0, 10, 10);
-        REQUIRE(loader.save(matrix1, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.save(&matrix1, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
+                IMatrixLoader::SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
-        REQUIRE(loader.load(matrix2, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.load(&matrix2, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
+                IMatrixLoader::SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());
@@ -110,19 +112,19 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
     }
 
     SECTION("File operation errors") {
-        CoordsMatrixXf matrix;
-        MatrixLoader   loader;
+        CoordsMatrixXf       matrix;
+        CoordsMatrixXfLoader loader;
 
         // Test FILE_NOT_OPEN error
-        CHECK(loader.load(matrix, "non_existent_file.txt") == MatrixLoader::FILE_NOT_OPEN);
-        CHECK(loader.save(matrix1, "/invalid/path/file.txt") == MatrixLoader::FILE_NOT_OPEN);
+        CHECK(loader.load(&matrix, "non_existent_file.txt") == IMatrixLoader::FILE_NOT_OPEN);
+        CHECK(loader.save(&matrix1, "/invalid/path/file.txt") == IMatrixLoader::FILE_NOT_OPEN);
 
         // Test INVALID_DIMENSIONS error
         {
             std::ofstream bad_file("bad_dimensions.txt");
             bad_file << "-1\t-1\n";
             bad_file.close();
-            CHECK(loader.load(matrix, "bad_dimensions.txt") == MatrixLoader::INVALID_DIMENSIONS);
+            CHECK(loader.load(&matrix, "bad_dimensions.txt") == IMatrixLoader::INVALID_DIMENSIONS);
             std::remove("bad_dimensions.txt");
         }
 
@@ -131,7 +133,7 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
             std::ofstream bad_file("corrupted.txt");
             bad_file << "6\t11\nnotanumber";
             bad_file.close();
-            CHECK(loader.load(matrix, "corrupted.txt") == MatrixLoader::READ_ERROR);
+            CHECK(loader.load(&matrix, "corrupted.txt") == IMatrixLoader::READ_ERROR);
             std::remove("corrupted.txt");
         }
     }
@@ -142,16 +144,16 @@ TEST_CASE("CoordsMatrixXf file operations [format 1 Column-major]", "[matrix]") 
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
-        MatrixLoader loader;
+        CoordsMatrixXfLoader loader;
 
         const std::string temp_file = "CoordsMatrixXf_format_1.txt";
-        REQUIRE(loader.save(matrix1, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.save(&matrix1, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                IMatrixLoader::SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
-        REQUIRE(loader.load(matrix2, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.load(&matrix2, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                IMatrixLoader::SUCCESS);
 
         std::cout << "[Column-major]" << fs::absolute(temp_file).string() << std::endl;
         std::cout << " Display: (rows,cols)= \n", matrix2.dump(1, 10, 10);

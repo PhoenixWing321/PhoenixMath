@@ -3,7 +3,7 @@
 
 #include "glm/glm.hpp"
 #include "shape/Bounds2f.hpp"
-#include "shape/EigenDefine.hpp"
+#include "shape/IRowMatrixXf.hpp"
 #include "utility/Code.hpp"
 #include "utility/Result.hpp"
 #include <Eigen/Dense>

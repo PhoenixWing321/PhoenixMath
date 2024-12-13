@@ -1,23 +1,15 @@
 #ifndef PHOENIX_IMatrixLoader_H
 #define PHOENIX_IMatrixLoader_H
 
-#include "shape/EigenDefine.hpp"
-
+#include "shape/IRowMatrixXf.hpp"
 #include "utility/Code.hpp"
+#include <iostream>
 
 namespace Phoenix {
 
-class IMatrixLoader {
-public:
-    virtual Code load(IRowMatrixXf& matrix, const std::string& path) = 0;
-    virtual Code save(IRowMatrixXf& matrix, const std::string& path) = 0;
-    virtual Code save_polar(IRowMatrixXf& matrix, const std::string& path) {
-        return NOT_IMPLEMENTED;
-    };
+struct IMatrixLoader {
 
-public:
-    // Error codes
-    enum ErrorCode {
+    enum ErrorCode { // Error codes
         SUCCESS             = 0,
         FILE_NOT_OPEN       = 1,
         INVALID_DIMENSIONS  = 2,
@@ -26,14 +18,44 @@ public:
         INVALID_FORMAT      = 5,
         INVALID_MATRIX_TYPE = 6, // matrix type is invalid
         UNKNOWN_ERROR       = 7,
-        NOT_IMPLEMENTED     = 8
+        NOT_IMPLEMENTED     = 8,
+        INVALID_POINTER     = 9,
     };
 
     enum Format {
-        FORMAT_ROW_DEFAULT     = 0, // default row-major format
-        FORMAT_COL_COORD_FIRST = 1, // a kind of column-major format
-        FORMAT_PPM             = 2  // a kind of PPM format
+        FORMAT_UNDEFINED       = 0, // undefined format
+        FORMAT_ROW_DEFAULT     = 1, // default row-major format
+        FORMAT_COL_COORD_FIRST = 2, // column-major format
+        FORMAT_PPM             = 3, // PPM format
+        FORMAT_IMG_POLAR       = 4, // PPM polar format
     };
+
+    int format; ///< format of the matrix or target file
+
+    IMatrixLoader(int format = FORMAT_UNDEFINED)
+        : format(format) {}
+
+    virtual ~IMatrixLoader() = default;
+
+    /**
+     * @brief Load from file
+     * @param matrix Matrix to load
+     * @param path File path
+     * @param format Format of the matrix or file
+     * @return int Error code
+     */
+    virtual int load(IRowMatrixXf* matrix, const std::string& path,
+                     int format = FORMAT_UNDEFINED) const = 0;
+
+    /**
+     * @brief Save to file
+     * @param matrix Matrix to save
+     * @param path File path
+     * @param format Format of the matrix or file
+     * @return int Error code
+     */
+    virtual int save(const IRowMatrixXf* matrix, const std::string& path,
+                     int format = FORMAT_UNDEFINED) const = 0;
 };
 
 } // namespace Phoenix

@@ -21,9 +21,9 @@ target_link_libraries(test_CoordsMatrixXf PhoenixMath)
 add_test(NAME "test_CoordsMatrixXf" COMMAND test_CoordsMatrixXf)
 
 # === test ===
-add_executable(test_MatrixFormatHandler "test_MatrixFormatHandler.cpp")
-target_link_libraries(test_MatrixFormatHandler PhoenixMath)
-add_test(NAME "test_MatrixFormatHandler" COMMAND test_MatrixFormatHandler)
+add_executable(test_MatrixLoaderHandler "test_MatrixLoaderHandler.cpp")
+target_link_libraries(test_MatrixLoaderHandler PhoenixMath)
+add_test(NAME "test_MatrixLoaderHandler" COMMAND test_MatrixLoaderHandler)
 
 # === test ===
 add_executable(test_ColorRGB "test_ColorRGB.cpp")

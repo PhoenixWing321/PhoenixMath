@@ -22,22 +22,23 @@ namespace fs = std::filesystem;
 namespace Phoenix {
 
 //----------------------------------
-Code PpmLoader::load(IRowMatrixXf& matrix, const std::string& path) {
+int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) const {
+    if (matrix == nullptr) return INVALID_POINTER;
     // 是一个 RAII (Resource Acquisition Is Initialization)
     // 类型的对象，当它的生命周期结束时（即函数返回时），会自动调用析构函数，关闭文件流。
     std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) {
-        return Code(ErrorCode::FILE_NOT_OPEN);
+        return ErrorCode::FILE_NOT_OPEN;
     }
 
     // Read PPM header
-    std::string format;
+    std::string strFormat;
     int         width, height, maxVal;
 
     // Read format identifier (P6)
-    file >> format;
-    if (format != "P6") {
-        return Code(ErrorCode::INVALID_FORMAT);
+    file >> strFormat;
+    if (strFormat != "P6") {
+        return ErrorCode::INVALID_FORMAT;
     }
 
     // Skip comments
@@ -49,22 +50,22 @@ Code PpmLoader::load(IRowMatrixXf& matrix, const std::string& path) {
     // Read dimensions
     file >> width >> height;
     if (file.fail()) {
-        return Code(ErrorCode::READ_ERROR);
+        return ErrorCode::READ_ERROR;
     }
 
     // Read max color value
     file >> maxVal;
     if (file.fail() || maxVal != 255) {
-        return Code(ErrorCode::INVALID_FORMAT);
+        return ErrorCode::INVALID_FORMAT;
     }
 
     // Skip single whitespace character after maxVal
     file.get();
 
     // Resize matrix to match image dimensions
-    matrix.resize(height, width);
+    matrix->resize(height, width);
 
-    CoordsMatrixXf* coords = dynamic_cast<CoordsMatrixXf*>(&matrix);
+    CoordsMatrixXf* coords = dynamic_cast<CoordsMatrixXf*>(matrix);
     // 如果矩阵是CoordsMatrixXf，则设置x和y坐标
     if (coords) {
         // set x coords
@@ -85,24 +86,25 @@ Code PpmLoader::load(IRowMatrixXf& matrix, const std::string& path) {
         for (int j = 0; j < width; ++j) {
             // Read RGB values
             file.read(buffer, 3);
-            if (file.fail()) return READ_ERROR;
+            if (file.fail()) return ErrorCode::READ_ERROR;
 
-            matrix(i, j) = ColorRGB::color_to_ratio(color, sub_type);
+            matrix->coeffRef(i, j) = ColorRGB::color_to_ratio(color, sub_type);
         }
     }
 
     file.close();
-    return SUCCESS;
+    return ErrorCode::SUCCESS;
 }
 //----------------------------------
-Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
+int PpmLoader::save(const IRowMatrixXf* matrix, const std::string& path, int format) const {
+    if (matrix == nullptr) return INVALID_POINTER;
     // PHOENIX_DEBUG(std::cout << "save path: " << fs::absolute(path) << std::endl;)
     // PPM保存实现
     std::ofstream file(path, std::ios::binary);
-    if (!file.is_open()) return FILE_NOT_OPEN;
+    if (!file.is_open()) return ErrorCode::FILE_NOT_OPEN;
 
-    auto rows = matrix.rows();
-    auto cols = matrix.cols();
+    auto rows = matrix->rows();
+    auto cols = matrix->cols();
 
     // 写入PPM头部信息
     file << "P6\n";
@@ -110,7 +112,7 @@ Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
     file << "255\n";
 
     // 检索最大值用于归一化
-    float    max_value = matrix.maxCoeff();
+    float    max_value = matrix->maxCoeff();
     ColorRGB color;
     char*    pixel = reinterpret_cast<char*>(&color);
 
@@ -120,7 +122,7 @@ Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
         PHOENIX_DEBUG(std::cout << std::setw(5) << i << " |")
         for (int j = 0; j < cols; ++j) {
             // 归一化并转换为RGB值
-            color = ColorRGB::ratio_to_color(matrix(i, j) * ratio, sub_type);
+            color = ColorRGB::ratio_to_color(matrix->coeff(i, j) * ratio, sub_type);
             file.write(pixel, 3); // 写入3个字节
             PHOENIX_DEBUG(std::cout << " " << std::setw(3) << "(" << (int)color.r << ","
                                     << (int)color.g << "," << (int)color.b << ")")
@@ -128,17 +130,18 @@ Code PpmLoader::save(IRowMatrixXf& matrix, const std::string& path) {
         PHOENIX_DEBUG(std::cout << std::endl;)
     }
 
-    if (file.fail()) return WRITE_ERROR;
+    if (file.fail()) return ErrorCode::WRITE_ERROR;
 
     file.close();
-    return SUCCESS;
+    return ErrorCode::SUCCESS;
 }
 
-Code PpmLoader::save_polar(IRowMatrixXf& matrix, const std::string& path) {
-    if (matrix.rows() == 0 || matrix.cols() == 0) return INVALID_DIMENSIONS;
+int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) const {
+    if (matrix == nullptr) return INVALID_POINTER;
+    if (matrix->rows() == 0 || matrix->cols() == 0) return INVALID_DIMENSIONS;
 
     // 创建一个圆形图像
-    int image_size = matrix.cols() * 2; // 图像大小
+    int image_size = static_cast<int>(matrix->cols() * 2); // 图像大小
     int center_x   = image_size / 2;
     int center_y   = image_size / 2;
     int max_radius = (image_size - 40) / 2; // 留出边距
@@ -147,15 +150,15 @@ Code PpmLoader::save_polar(IRowMatrixXf& matrix, const std::string& path) {
     Eigen::MatrixXf polar_image = Eigen::MatrixXf::Zero(image_size, image_size);
 
     // 获取原始矩阵的维度
-    int rows = matrix.rows(); // 对应极坐标中的r (0-90度)
-    int cols = matrix.cols(); // 对应极坐标中的θ (0-360度)
+    int rows = static_cast<int>(matrix->rows()); // 对应极坐标中的r (0-90度)
+    int cols = static_cast<int>(matrix->cols()); // 对应极坐标中的θ (0-360度)
 
     // 对每个像素进行极坐标映射
     for (int y = 0; y < image_size; ++y) {
         for (int x = 0; x < image_size; ++x) {
             // 计算相对于中心的位置
-            float dx = x - center_x;
-            float dy = y - center_y;
+            float dx = static_cast<float>(x - center_x);
+            float dy = static_cast<float>(y - center_y);
 
             // 计算极坐标
             float radius = std::sqrt(dx * dx + dy * dy);
@@ -182,9 +185,10 @@ Code PpmLoader::save_polar(IRowMatrixXf& matrix, const std::string& path) {
                     float t = row_f - row;
                     float s = col_f - col;
 
-                    float value =
-                        (1 - t) * (1 - s) * matrix(row, col) + t * (1 - s) * matrix(row + 1, col) +
-                        (1 - t) * s * matrix(row, col + 1) + t * s * matrix(row + 1, col + 1);
+                    float value = (1 - t) * (1 - s) * matrix->coeff(row, col) +
+                                  t * (1 - s) * matrix->coeff(row + 1, col) +
+                                  (1 - t) * s * matrix->coeff(row, col + 1) +
+                                  t * s * matrix->coeff(row + 1, col + 1);
 
                     polar_image(y, x) = value;
                 }
@@ -224,7 +228,7 @@ Code PpmLoader::save_polar(IRowMatrixXf& matrix, const std::string& path) {
     // TODO: 添加角度刻度和径向网格线
 
     file.close();
-    return SUCCESS;
+    return ErrorCode::SUCCESS;
 }
 
 } // namespace Phoenix
