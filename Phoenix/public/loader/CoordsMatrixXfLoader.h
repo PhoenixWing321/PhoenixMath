@@ -9,7 +9,7 @@ namespace Phoenix {
 class CoordsMatrixXfLoader : public IMatrixLoader {
 public:
     CoordsMatrixXfLoader()
-        : IMatrixLoader(FORMAT_UNDEFINED)
+        : IMatrixLoader(IMatrixLoader::FORMAT_UNDEFINED)
         , break_count(8) {}
 
     virtual ~CoordsMatrixXfLoader() = default;
@@ -23,7 +23,7 @@ public: // override
      * @return int Error code
      */
     virtual int load(IRowMatrixXf* matrix, const std::string& path,
-                     int format = FORMAT_UNDEFINED) const override;
+                     int format = FORMAT_ROW_DEFAULT) const override;
     /**
      * @brief Save to file
      * @param matrix Matrix to save
@@ -32,7 +32,7 @@ public: // override
      * @return int Error code
      */
     virtual int save(const IRowMatrixXf* matrix, const std::string& path,
-                     int format = FORMAT_UNDEFINED) const override;
+                     int format = FORMAT_ROW_DEFAULT) const override;
 
 public:
     /**
@@ -58,6 +58,13 @@ public:
     int save(const CoordsMatrixXf* matrix, const std::string& path, int format) const;
 
     /**
+     * @brief Save to PPM file
+     * @param path File path
+     * @return int Error code
+     */
+    int save_ppm(const CoordsMatrixXf* matrix, const std::string& path, int format) const;
+
+    /**
      * @brief Save to stringstream
      * @param stream stringstream object to save to
      * @return int Error code
@@ -65,13 +72,6 @@ public:
     int serialize(const CoordsMatrixXf* matrix, std::stringstream& stream, int format) const;
 
 private:
-    /**
-     * @brief Save to PPM file
-     * @param path File path
-     * @return int Error code
-     */
-    int save_ppm(const CoordsMatrixXf* matrix, const std::string& path) const;
-
     int break_count{8}; // break count for delimiter
 };
 

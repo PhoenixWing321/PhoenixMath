@@ -10,9 +10,12 @@ namespace Phoenix {
 class PpmLoader : public IMatrixLoader {
 public:
     PpmLoader()
-        : sub_type(ColorRGB::HEAT_MAP) {}
-    PpmLoader(ColorRGB::ColorFormat sub_type)
-        : sub_type(sub_type) {}
+        : IMatrixLoader(FORMAT_PPM)
+        , color_format(ColorRGB::HEAT_MAP) {}
+
+    PpmLoader(ColorRGB::ColorFormat color_format)
+        : IMatrixLoader(FORMAT_PPM)
+        , color_format(color_format) {}
 
     virtual ~PpmLoader() = default;
 
@@ -38,9 +41,10 @@ public: // override
 
 public:
     int save_polar(const IRowMatrixXf* matrix, const std::string& path) const;
+    int save_ppm(const IRowMatrixXf* matrix, const std::string& path) const;
 
 public:
-    ColorRGB::ColorFormat sub_type;
+    ColorRGB::ColorFormat color_format;
 };
 
 } // namespace Phoenix

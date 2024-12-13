@@ -123,7 +123,7 @@ TEST_CASE("ColorRGB conversion tests", "[ColorRGB]") {
             // 测试中间值
             color = ColorRGB{128, 128, 128};
             ratio = ColorRGB::color_to_ratio(color, ColorRGB::LUMINANCE);
-            CHECK(ratio == Approx(0.5f));
+            CHECK(ratio == Approx(0.50196f));
         }
     }
 

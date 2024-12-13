@@ -79,12 +79,12 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
         std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
         std::cout << " Display: (rows,cols)= \n", matrix1.dump(0, 10, 10);
         REQUIRE(loader.save(&matrix1, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
-                IMatrixLoader::SUCCESS);
+                IMatrixLoader::Code_SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
         REQUIRE(loader.load(&matrix2, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
-                IMatrixLoader::SUCCESS);
+                IMatrixLoader::Code_SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());
@@ -148,12 +148,12 @@ TEST_CASE("CoordsMatrixXf file operations [format 1 Column-major]", "[matrix]") 
 
         const std::string temp_file = "CoordsMatrixXf_format_1.txt";
         REQUIRE(loader.save(&matrix1, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                IMatrixLoader::SUCCESS);
+                IMatrixLoader::Code_SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
         REQUIRE(loader.load(&matrix2, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                IMatrixLoader::SUCCESS);
+                IMatrixLoader::Code_SUCCESS);
 
         std::cout << "[Column-major]" << fs::absolute(temp_file).string() << std::endl;
         std::cout << " Display: (rows,cols)= \n", matrix2.dump(1, 10, 10);

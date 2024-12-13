@@ -23,7 +23,7 @@ namespace Phoenix {
 
 //----------------------------------
 int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) const {
-    if (matrix == nullptr) return INVALID_POINTER;
+    if (matrix == nullptr) return PW_E_POINTER;
     // 是一个 RAII (Resource Acquisition Is Initialization)
     // 类型的对象，当它的生命周期结束时（即函数返回时），会自动调用析构函数，关闭文件流。
     std::ifstream file(path, std::ios::binary);
@@ -38,7 +38,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) c
     // Read format identifier (P6)
     file >> strFormat;
     if (strFormat != "P6") {
-        return ErrorCode::INVALID_FORMAT;
+        return ErrorCode::Code_INVALID_FORMAT;
     }
 
     // Skip comments
@@ -56,7 +56,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) c
     // Read max color value
     file >> maxVal;
     if (file.fail() || maxVal != 255) {
-        return ErrorCode::INVALID_FORMAT;
+        return ErrorCode::Code_INVALID_FORMAT;
     }
 
     // Skip single whitespace character after maxVal
@@ -88,16 +88,27 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) c
             file.read(buffer, 3);
             if (file.fail()) return ErrorCode::READ_ERROR;
 
-            matrix->coeffRef(i, j) = ColorRGB::color_to_ratio(color, sub_type);
+            matrix->coeffRef(i, j) = ColorRGB::color_to_ratio(color, color_format);
         }
     }
 
     file.close();
-    return ErrorCode::SUCCESS;
+    return ErrorCode::Code_SUCCESS;
 }
 //----------------------------------
 int PpmLoader::save(const IRowMatrixXf* matrix, const std::string& path, int format) const {
-    if (matrix == nullptr) return INVALID_POINTER;
+    switch (format) {
+    case IMatrixLoader::FORMAT_IMG_POLAR:
+        return save_polar(matrix, path);
+    case IMatrixLoader::FORMAT_PPM:
+        return save_ppm(matrix, path);
+    }
+    return save_ppm(matrix, path);
+    // return IMatrixLoader::Code_INVALID_FORMAT;
+}
+//----------------------------------
+int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) const {
+    if (matrix == nullptr) return PW_E_POINTER;
     // PHOENIX_DEBUG(std::cout << "save path: " << fs::absolute(path) << std::endl;)
     // PPM保存实现
     std::ofstream file(path, std::ios::binary);
@@ -122,7 +133,7 @@ int PpmLoader::save(const IRowMatrixXf* matrix, const std::string& path, int for
         PHOENIX_DEBUG(std::cout << std::setw(5) << i << " |")
         for (int j = 0; j < cols; ++j) {
             // 归一化并转换为RGB值
-            color = ColorRGB::ratio_to_color(matrix->coeff(i, j) * ratio, sub_type);
+            color = ColorRGB::ratio_to_color(matrix->coeff(i, j) * ratio, color_format);
             file.write(pixel, 3); // 写入3个字节
             PHOENIX_DEBUG(std::cout << " " << std::setw(3) << "(" << (int)color.r << ","
                                     << (int)color.g << "," << (int)color.b << ")")
@@ -133,11 +144,11 @@ int PpmLoader::save(const IRowMatrixXf* matrix, const std::string& path, int for
     if (file.fail()) return ErrorCode::WRITE_ERROR;
 
     file.close();
-    return ErrorCode::SUCCESS;
+    return ErrorCode::Code_SUCCESS;
 }
-
+//----------------------------------
 int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) const {
-    if (matrix == nullptr) return INVALID_POINTER;
+    if (matrix == nullptr) return PW_E_POINTER;
     if (matrix->rows() == 0 || matrix->cols() == 0) return INVALID_DIMENSIONS;
 
     // 创建一个圆形图像
@@ -214,7 +225,7 @@ int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) c
         for (int j = 0; j < image_size; ++j) {
             if (std::sqrt(std::pow(i - center_y, 2) + std::pow(j - center_x, 2)) <= max_radius) {
                 // 在圆内的像素
-                color = ColorRGB::ratio_to_color(polar_image(i, j) / max_value, sub_type);
+                color = ColorRGB::ratio_to_color(polar_image(i, j) / max_value, color_format);
             }
             else {
                 // 圆外的像素设为白色
@@ -228,7 +239,7 @@ int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) c
     // TODO: 添加角度刻度和径向网格线
 
     file.close();
-    return ErrorCode::SUCCESS;
+    return ErrorCode::Code_SUCCESS;
 }
 
 } // namespace Phoenix
