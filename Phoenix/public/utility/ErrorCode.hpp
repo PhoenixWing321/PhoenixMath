@@ -21,13 +21,13 @@ struct ErrorCode {
         Code_E_OUT_OF_RANGE  = 8,  ///< Value is out of valid range
         Code_E_FLOAT_NAN     = 9,  ///< float/double nan
         Code_E_FLOAT_INF     = 10, ///< float/double inf
-        NOT_IMPLEMENTED      = 11, ///< Function is not implemented
-        FILE_NOT_OPEN        = 12, ///< Failed to open file
-        INVALID_DIMENSIONS   = 13, ///< Matrix dimensions are invalid
-        READ_ERROR           = 14, ///< Error occurred during read operation
-        WRITE_ERROR          = 15, ///< Error occurred during write operation
+        Code_NOT_IMPLEMENTED = 11, ///< Function is not implemented
+        Code_FILE_NOT_OPEN   = 12, ///< Failed to open file
+        Code_INVALID_SIZE    = 13, ///< Matrix dimensions are invalid
+        Code_READ_ERROR      = 14, ///< Error occurred during read operation
+        Code_WRITE_ERROR     = 15, ///< Error occurred during write operation
         Code_INVALID_FORMAT  = 16, ///< File format is invalid
-        INVALID_MATRIX_TYPE  = 17  ///< matrix type is invalid
+        Code_INVALID_TYPE    = 17  ///< matrix type is invalid
     };
 
     static const char* get_string(int code) {
@@ -54,19 +54,19 @@ struct ErrorCode {
             return "Float is NaN";
         case ErrorCode::Code_E_FLOAT_INF:
             return "Float is infinite";
-        case ErrorCode::NOT_IMPLEMENTED:
+        case ErrorCode::Code_NOT_IMPLEMENTED:
             return "Not implemented";
-        case ErrorCode::FILE_NOT_OPEN:
+        case ErrorCode::Code_FILE_NOT_OPEN:
             return "Failed to open file";
-        case ErrorCode::INVALID_DIMENSIONS:
+        case ErrorCode::Code_INVALID_SIZE:
             return "Invalid matrix dimensions";
-        case ErrorCode::READ_ERROR:
+        case ErrorCode::Code_READ_ERROR:
             return "Read error";
-        case ErrorCode::WRITE_ERROR:
+        case ErrorCode::Code_WRITE_ERROR:
             return "Write error";
         case ErrorCode::Code_INVALID_FORMAT:
             return "Invalid format";
-        case ErrorCode::INVALID_MATRIX_TYPE:
+        case ErrorCode::Code_INVALID_TYPE:
             return "Invalid matrix type";
         default:
             return "Unknown error";

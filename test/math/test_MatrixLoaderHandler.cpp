@@ -28,7 +28,7 @@ TEST_CASE("MatrixLoaderHandler Basic Tests", "[loader]") {
 
 TEST_CASE("MatrixLoaderHandler Color Format Tests", "[loader]") {
     CoordsMatrixXf matrix;
-    Code           code;
+    int            code;
 
     const std::vector<ColorRGB::ColorFormat> formats = {ColorRGB::GRAY_SCALE, ColorRGB::HEAT_MAP,
                                                         ColorRGB::LUMINANCE};
@@ -125,7 +125,7 @@ TEST_CASE("Polar Plot Test") {
     auto                loader = std::make_unique<PpmLoader>(ColorRGB::HEAT_MAP);
     MatrixLoaderHandler handler(std::move(loader));
 
-    Code code = handler.save(&matrix, "polar_plot.ppm", IMatrixLoader::FORMAT_IMG_POLAR);
+    int code = handler.save(&matrix, "polar_plot.ppm", IMatrixLoader::FORMAT_IMG_POLAR);
     REQUIRE(code == 0);
 }
 } // namespace Test

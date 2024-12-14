@@ -28,7 +28,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     // 类型的对象，当它的生命周期结束时（即函数返回时），会自动调用析构函数，关闭文件流。
     std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) {
-        return ErrorCode::FILE_NOT_OPEN;
+        return ErrorCode::Code_FILE_NOT_OPEN;
     }
 
     // Read PPM header
@@ -50,7 +50,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     // Read dimensions
     file >> width >> height;
     if (file.fail()) {
-        return ErrorCode::READ_ERROR;
+        return ErrorCode::Code_READ_ERROR;
     }
 
     // Read max color value
@@ -86,7 +86,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
         for (int j = 0; j < width; ++j) {
             // Read RGB values
             file.read(buffer, 3);
-            if (file.fail()) return ErrorCode::READ_ERROR;
+            if (file.fail()) return ErrorCode::Code_READ_ERROR;
 
             matrix->coeffRef(i, j) = ColorRGB::color_to_ratio(color, color_format);
         }
@@ -112,7 +112,7 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
     // PHOENIX_DEBUG(std::cout << "save path: " << fs::absolute(path) << std::endl;)
     // PPM保存实现
     std::ofstream file(path, std::ios::binary);
-    if (!file.is_open()) return ErrorCode::FILE_NOT_OPEN;
+    if (!file.is_open()) return ErrorCode::Code_FILE_NOT_OPEN;
 
     auto rows = matrix->rows();
     auto cols = matrix->cols();
@@ -141,7 +141,7 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
         PHOENIX_DEBUG(std::cout << std::endl;)
     }
 
-    if (file.fail()) return ErrorCode::WRITE_ERROR;
+    if (file.fail()) return ErrorCode::Code_WRITE_ERROR;
 
     file.close();
     return ErrorCode::Code_SUCCESS;
@@ -149,7 +149,7 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
 //----------------------------------
 int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) const {
     if (matrix == nullptr) return PW_E_POINTER;
-    if (matrix->rows() == 0 || matrix->cols() == 0) return ErrorCode::INVALID_DIMENSIONS;
+    if (matrix->rows() == 0 || matrix->cols() == 0) return ErrorCode::Code_INVALID_SIZE;
 
     // 创建一个圆形图像
     int image_size = static_cast<int>(matrix->cols() * 2); // 图像大小
@@ -209,7 +209,7 @@ int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) c
 
     // 保存为PPM文件
     std::ofstream file(path, std::ios::binary);
-    if (!file.is_open()) return ErrorCode::FILE_NOT_OPEN;
+    if (!file.is_open()) return ErrorCode::Code_FILE_NOT_OPEN;
 
     // 写入PPM头部信息
     file << "P6\n";

@@ -16,13 +16,13 @@ public:
         loader = std::move(loader);
     }
 
-    Code load(IRowMatrixXf* matrix, const std::string& path,
-              int format = IMatrixLoader::FORMAT_UNDEFINED) {
+    int load(IRowMatrixXf* matrix, const std::string& path,
+             int format = IMatrixLoader::FORMAT_UNDEFINED) {
         return loader->load(matrix, path, format);
     }
 
-    Code save(const IRowMatrixXf* matrix, const std::string& path,
-              int format = IMatrixLoader::FORMAT_UNDEFINED) {
+    int save(const IRowMatrixXf* matrix, const std::string& path,
+             int format = IMatrixLoader::FORMAT_UNDEFINED) {
         return loader->save(matrix, path, format);
     }
 

@@ -115,25 +115,25 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
         CoordsMatrixXf       matrix;
         CoordsMatrixXfLoader loader;
 
-        // Test FILE_NOT_OPEN error
-        CHECK(loader.load(&matrix, "non_existent_file.txt") == ErrorCode::FILE_NOT_OPEN);
-        CHECK(loader.save(&matrix1, "/invalid/path/file.txt") == ErrorCode::FILE_NOT_OPEN);
+        // Test Code_FILE_NOT_OPEN error
+        CHECK(loader.load(&matrix, "non_existent_file.txt") == ErrorCode::Code_FILE_NOT_OPEN);
+        CHECK(loader.save(&matrix1, "/invalid/path/file.txt") == ErrorCode::Code_FILE_NOT_OPEN);
 
-        // Test INVALID_DIMENSIONS error
+        // Test Code_INVALID_SIZE error
         {
             std::ofstream bad_file("bad_dimensions.txt");
             bad_file << "-1\t-1\n";
             bad_file.close();
-            CHECK(loader.load(&matrix, "bad_dimensions.txt") == ErrorCode::INVALID_DIMENSIONS);
+            CHECK(loader.load(&matrix, "bad_dimensions.txt") == ErrorCode::Code_INVALID_SIZE);
             std::remove("bad_dimensions.txt");
         }
 
-        // Test READ_ERROR with corrupted file
+        // Test Code_READ_ERROR with corrupted file
         {
             std::ofstream bad_file("corrupted.txt");
             bad_file << "6\t11\nnotanumber";
             bad_file.close();
-            CHECK(loader.load(&matrix, "corrupted.txt") == ErrorCode::READ_ERROR);
+            CHECK(loader.load(&matrix, "corrupted.txt") == ErrorCode::Code_READ_ERROR);
             std::remove("corrupted.txt");
         }
     }

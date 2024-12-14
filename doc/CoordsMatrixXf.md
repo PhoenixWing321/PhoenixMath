@@ -9,12 +9,8 @@
 
 ### 错误代码
 ```cpp
-enum ErrorCode {
-    SUCCESS            = 0,  // 操作成功
-    FILE_NOT_OPEN      = 1,  // 文件打开失败
-    INVALID_DIMENSIONS = 2,  // 无效的维度
-    READ_ERROR         = 3,  // 读取错误
-    WRITE_ERROR        = 4   // 写入错误
+struct ErrorCode {
+ ...
 }
 ```
 
