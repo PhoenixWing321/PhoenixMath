@@ -22,7 +22,7 @@ namespace fs = std::filesystem;
 namespace Phoenix {
 
 //----------------------------------
-int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) const {
+int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     if (matrix == nullptr) return PW_E_POINTER;
     // 是一个 RAII (Resource Acquisition Is Initialization)
     // 类型的对象，当它的生命周期结束时（即函数返回时），会自动调用析构函数，关闭文件流。

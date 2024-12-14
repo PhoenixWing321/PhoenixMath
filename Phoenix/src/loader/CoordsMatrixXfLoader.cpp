@@ -7,7 +7,7 @@
 
 namespace Phoenix {
 //------------------------------------------------------
-int CoordsMatrixXfLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) const {
+int CoordsMatrixXfLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     CoordsMatrixXf* coordsMatrix = dynamic_cast<CoordsMatrixXf*>(matrix);
     if (coordsMatrix == nullptr) return PW_E_POINTER;
     return load(coordsMatrix, path, format);
@@ -21,7 +21,7 @@ int CoordsMatrixXfLoader::save(const IRowMatrixXf* matrix, const std::string& pa
     return save(coordsMatrix, path, format);
 }
 //------------------------------------------------------
-int CoordsMatrixXfLoader::load(CoordsMatrixXf* matrix, const std::string& path, int format) const {
+int CoordsMatrixXfLoader::load(CoordsMatrixXf* matrix, const std::string& path, int format) {
     if (matrix == nullptr) return PW_E_POINTER;
     std::ifstream file(path);
     if (!file.is_open()) return FILE_NOT_OPEN;
@@ -47,8 +47,7 @@ int CoordsMatrixXfLoader::load(CoordsMatrixXf* matrix, const std::string& path, 
     return parse(matrix, buffer, format);
 }
 //------------------------------------------------------
-int CoordsMatrixXfLoader::parse(CoordsMatrixXf* matrix, std::stringstream& buffer,
-                                int format) const {
+int CoordsMatrixXfLoader::parse(CoordsMatrixXf* matrix, std::stringstream& buffer, int format) {
     if (matrix == nullptr) return PW_E_POINTER;
     if (!buffer.good()) return READ_ERROR;
     // check dimensions: x<==>cols, y<==>rows

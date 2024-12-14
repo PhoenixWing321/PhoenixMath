@@ -27,7 +27,7 @@ public: // override
      * @param format Format of the matrix or file
      * @return int Error code
      */
-    virtual int load(IRowMatrixXf* matrix, const std::string& path, int format) const override;
+    virtual int load(IRowMatrixXf* matrix, const std::string& path, int format) override;
 
     /**
      * @brief Save to file

@@ -23,7 +23,7 @@ public: // override
      * @return int Error code
      */
     virtual int load(IRowMatrixXf* matrix, const std::string& path,
-                     int format = FORMAT_ROW_DEFAULT) const override;
+                     int format = FORMAT_ROW_DEFAULT) override;
     /**
      * @brief Save to file
      * @param matrix Matrix to save
@@ -41,14 +41,14 @@ public:
      * @param format Format of the matrix or target file
      * @return int Error code
      */
-    int load(CoordsMatrixXf* matrix, const std::string& path, int format) const;
+    int load(CoordsMatrixXf* matrix, const std::string& path, int format);
 
     /**
      * @brief Load from stringstream
      * @param stream stringstream object to load from
      * @return int Error code
      */
-    int parse(CoordsMatrixXf* matrix, std::stringstream& stream, int format) const;
+    int parse(CoordsMatrixXf* matrix, std::stringstream& stream, int format);
 
     /**
      * @brief Save to file

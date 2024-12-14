@@ -52,7 +52,7 @@ struct IMatrixLoader {
      * @param format Format of the matrix or file，0 means undefined format
      * @return int Error code
      */
-    virtual int load(IRowMatrixXf* matrix, const std::string& path, int format) const = 0;
+    virtual int load(IRowMatrixXf* matrix, const std::string& path, int format) = 0;
 
     /**
      * @brief Save to file
