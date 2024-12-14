@@ -38,10 +38,10 @@ struct IMatrixLoader {
         FORMAT_IMG_POLAR       = 4, ///< PPM polar format
     };
 
-    int format; ///< format of the matrix or target file
+    int format_; ///< format of the matrix or target file
 
     IMatrixLoader(int format = FORMAT_UNDEFINED)
-        : format(format) {}
+        : format_(format) {}
 
     virtual ~IMatrixLoader() = default;
 
@@ -62,6 +62,14 @@ struct IMatrixLoader {
      * @return int Error code
      */
     virtual int save(const IRowMatrixXf* matrix, const std::string& path, int format) const = 0;
+
+    inline void set_format(int format) {
+        format_ = format;
+    }
+
+    inline int get_format() const {
+        return format_;
+    }
 };
 
 } // namespace Phoenix
