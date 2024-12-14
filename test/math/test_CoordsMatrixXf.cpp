@@ -79,12 +79,12 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
         std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
         std::cout << " Display: (rows,cols)= \n", matrix1.dump(0, 10, 10);
         REQUIRE(loader.save(&matrix1, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
-                IMatrixLoader::Code_SUCCESS);
+                ErrorCode::Code_SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
         REQUIRE(loader.load(&matrix2, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
-                IMatrixLoader::Code_SUCCESS);
+                ErrorCode::Code_SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());
@@ -116,15 +116,15 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
         CoordsMatrixXfLoader loader;
 
         // Test FILE_NOT_OPEN error
-        CHECK(loader.load(&matrix, "non_existent_file.txt") == IMatrixLoader::FILE_NOT_OPEN);
-        CHECK(loader.save(&matrix1, "/invalid/path/file.txt") == IMatrixLoader::FILE_NOT_OPEN);
+        CHECK(loader.load(&matrix, "non_existent_file.txt") == ErrorCode::FILE_NOT_OPEN);
+        CHECK(loader.save(&matrix1, "/invalid/path/file.txt") == ErrorCode::FILE_NOT_OPEN);
 
         // Test INVALID_DIMENSIONS error
         {
             std::ofstream bad_file("bad_dimensions.txt");
             bad_file << "-1\t-1\n";
             bad_file.close();
-            CHECK(loader.load(&matrix, "bad_dimensions.txt") == IMatrixLoader::INVALID_DIMENSIONS);
+            CHECK(loader.load(&matrix, "bad_dimensions.txt") == ErrorCode::INVALID_DIMENSIONS);
             std::remove("bad_dimensions.txt");
         }
 
@@ -133,7 +133,7 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
             std::ofstream bad_file("corrupted.txt");
             bad_file << "6\t11\nnotanumber";
             bad_file.close();
-            CHECK(loader.load(&matrix, "corrupted.txt") == IMatrixLoader::READ_ERROR);
+            CHECK(loader.load(&matrix, "corrupted.txt") == ErrorCode::READ_ERROR);
             std::remove("corrupted.txt");
         }
     }
@@ -148,12 +148,12 @@ TEST_CASE("CoordsMatrixXf file operations [format 1 Column-major]", "[matrix]") 
 
         const std::string temp_file = "CoordsMatrixXf_format_1.txt";
         REQUIRE(loader.save(&matrix1, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                IMatrixLoader::Code_SUCCESS);
+                ErrorCode::Code_SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
         REQUIRE(loader.load(&matrix2, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                IMatrixLoader::Code_SUCCESS);
+                ErrorCode::Code_SUCCESS);
 
         std::cout << "[Column-major]" << fs::absolute(temp_file).string() << std::endl;
         std::cout << " Display: (rows,cols)= \n", matrix2.dump(1, 10, 10);

@@ -149,7 +149,7 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
 //----------------------------------
 int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) const {
     if (matrix == nullptr) return PW_E_POINTER;
-    if (matrix->rows() == 0 || matrix->cols() == 0) return INVALID_DIMENSIONS;
+    if (matrix->rows() == 0 || matrix->cols() == 0) return ErrorCode::INVALID_DIMENSIONS;
 
     // 创建一个圆形图像
     int image_size = static_cast<int>(matrix->cols() * 2); // 图像大小
@@ -209,7 +209,7 @@ int PpmLoader::save_polar(const IRowMatrixXf* matrix, const std::string& path) c
 
     // 保存为PPM文件
     std::ofstream file(path, std::ios::binary);
-    if (!file.is_open()) return FILE_NOT_OPEN;
+    if (!file.is_open()) return ErrorCode::FILE_NOT_OPEN;
 
     // 写入PPM头部信息
     file << "P6\n";
