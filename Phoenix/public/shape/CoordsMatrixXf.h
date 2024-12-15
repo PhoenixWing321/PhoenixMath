@@ -7,6 +7,7 @@
 #include <iostream>
 
 namespace Phoenix {
+class BoundedMatrixXf;
 
 class CoordsMatrixXf : public IRowMatrixXf {
 public:
@@ -18,6 +19,12 @@ public:
     virtual ~CoordsMatrixXf() = default;
 
 public:
+    /**
+     * @brief Convert to BoundedMatrixXf
+     * @param out: output matrix
+     */
+    int convert(BoundedMatrixXf& out) const;
+
     // Fill with sample data
     void fill_pattern(int rows = 10, int cols = 6);
 

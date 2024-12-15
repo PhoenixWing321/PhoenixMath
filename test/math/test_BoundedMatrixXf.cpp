@@ -43,7 +43,7 @@ TEST_CASE("BoundedMatrixXf::fill_pattern", "[matrix]") {
     SECTION("check (i,j) function to touch the matrix") {
         auto& matrix = area;
         cout << " Bounds Matrix:" << endl;
-        cout << "Bounds : " << (Phoenix::Bounds2f&)area << endl;
+        cout << "Bounds : " << area.bounds << endl;
         cout << "x segment = " << (area.bounds.right - area.bounds.left) / area.cols()
              << ", cols = " << matrix.cols() << endl;
         cout << "y segment = " << (area.bounds.top - area.bounds.bottom) / area.rows()

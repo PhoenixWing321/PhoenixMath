@@ -1,9 +1,35 @@
 #include "shape/CoordsMatrixXf.h"
+#include "shape/BoundedMatrixXf.h"
 #include "utility/StreamTools.hpp"
 #include <fstream>
 
 namespace Phoenix {
 
+//------------------------------------------------------
+int CoordsMatrixXf::convert(BoundedMatrixXf& out) const {
+
+    if (cols() < 2 || rows() < 2) {
+        return ErrorCode::Code_INVALID_SIZE;
+    }
+
+    out.resize(rows(), cols());
+    (RowMatrixXf&)out = *this;
+
+    // calculate gap
+    float gap_x = (x_coords(cols() - 1) - x_coords(0)) / (cols() - 1);
+    float gap_y = (y_coords(rows() - 1) - y_coords(0)) / (rows() - 1);
+
+    Bounds2f bounds;
+    auto     b_min = glm::vec2(x_coords(0) - gap_x * 0.5f, y_coords(0) - gap_y * 0.5f);
+    auto     b_max =
+        glm::vec2(x_coords(cols() - 1) + gap_x * 0.5f, y_coords(rows() - 1) + gap_y * 0.5f);
+
+    // expand bounds
+    bounds.expand(b_min);
+    bounds.expand(b_max);
+    out.bounds = bounds; // copy bounds
+    return 0;
+}
 //------------------------------------------------------
 void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
     if (rows0 > rows()) rows0 = (int)rows();
@@ -78,6 +104,7 @@ void CoordsMatrixXf::dump(int format, int rows0, int cols0) const {
 }
 //------------------------------------------------------
 void CoordsMatrixXf::fill_pattern(int rows, int cols) {
+
     if (rows == 0 || cols == 0) {
         rows = 10;
         cols = 6;

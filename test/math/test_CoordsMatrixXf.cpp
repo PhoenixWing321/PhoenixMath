@@ -3,6 +3,7 @@
 
 #include "loader/CoordsMatrixXfLoader.h"
 #include "loader/MatrixLoaderHandler.hpp"
+#include "shape/BoundedMatrixXf.h"
 #include "shape/CoordsMatrixXf.h"
 
 #include "../inside.hpp"
@@ -184,6 +185,28 @@ TEST_CASE("CoordsMatrixXf data validation", "[CoordsMatrixXf]") {
                 CHECK(matrix(i, j) <= 20.0f);
             }
         }
+    }
+}
+
+TEST_CASE("CoordsMatrixXf coordinate conversion", "[CoordsMatrixXf]") {
+    CoordsMatrixXf matrix;
+    matrix.fill_pattern(5, 4); // 创建一个5x4的测试矩阵
+
+    SECTION("Convert matrix coordinates to real coordinates") {
+        std::cout << "Coords Matrix =" << std::endl;
+        matrix.dump();
+
+        BoundedMatrixXf out;
+        matrix.convert(out);
+        // out.dump();
+        cout << "Bounds : " << out.bounds << std::endl;
+        std::cout << "Bounded Matrix = " << std::endl << out << std::endl;
+
+        // Bounds : {(-8.33333, -2.625), (58.3333, 23.625)}
+        CHECK(out.bounds.right == Approx(58.3333));
+        CHECK(out.bounds.top == Approx(23.625));
+        CHECK(out.bounds.left == Approx(-8.33333));
+        CHECK(out.bounds.bottom == Approx(-2.625));
     }
 }
 
