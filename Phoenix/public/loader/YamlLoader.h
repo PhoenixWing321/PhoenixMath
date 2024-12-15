@@ -40,8 +40,17 @@ public: // override
     };
 
 public:
+    /**
+     * @brief Load properties from a YAML file
+     * @param path Path to the YAML file
+     * @return int Error code
+     * @note create new data_ each time call this function
+     */
     int load_properties(const std::string& path);
     int save_properties(const std::string& path) const;
+
+private:
+    std::shared_ptr<PropertiesData> properties_;
 };
 
 } // namespace Phoenix

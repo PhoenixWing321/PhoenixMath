@@ -20,7 +20,9 @@ TEST_CASE("YamlLoader::load_properties", "[YamlLoader]") {
     std::string         testFilePath = "test.yaml";
 
     SECTION("Load properties from a valid YAML file") {
-        create_test_yaml(testFilePath, "key1: value1\nkey2: value2\n");
+        create_test_yaml(testFilePath, "in: d:\\projects\\input\n"
+                                       "out: d:\\projects\\output\n"
+                                       "key1: value1\nkey2: value2");
 
         int result = loader.load_properties(testFilePath);
         REQUIRE(result == 0);
@@ -46,6 +48,9 @@ TEST_CASE("YamlLoader::save_properties", "[YamlLoader]") {
         auto properties_data = std::make_shared<PropertiesData>();
         properties_data->add_property("key1", "value1");
         properties_data->add_property("key2", "value2");
+        properties_data->add_property("in", "d:\\projects\\input");
+        properties_data->add_property("out", "d:\\projects\\output");
+
         loader.set_data(properties_data);
 
         int result = loader.save_properties(testFilePath);
