@@ -28,10 +28,10 @@ TEST_CASE("YamlLoader::load_properties", "[YamlLoader]") {
         REQUIRE(result == 0);
 
         REQUIRE(loader.get_data() != nullptr);
-        auto properties_data = std::dynamic_pointer_cast<PropertiesData>(loader.data_);
-        REQUIRE(properties_data != nullptr);
-        REQUIRE(properties_data->get_property("key1") == "value1");
-        REQUIRE(properties_data->get_property("key2") == "value2");
+        auto properties = loader.get_properties();
+        REQUIRE(properties != nullptr);
+        REQUIRE(properties->get_property("key1") == "value1");
+        REQUIRE(properties->get_property("key2") == "value2");
     }
 
     SECTION("Handle non-existent file") {
@@ -45,13 +45,13 @@ TEST_CASE("YamlLoader::save_properties", "[YamlLoader]") {
     std::string         testFilePath = "output.yaml";
 
     SECTION("Save properties to a YAML file") {
-        auto properties_data = std::make_shared<PropertiesData>();
-        properties_data->add_property("key1", "value1");
-        properties_data->add_property("key2", "value2");
-        properties_data->add_property("in", "d:\\projects\\input");
-        properties_data->add_property("out", "d:\\projects\\output");
+        auto properties = std::make_shared<PropertiesData>();
+        properties->add_property("key1", "value1");
+        properties->add_property("key2", "value2");
+        properties->add_property("in", "d:\\projects\\input");
+        properties->add_property("out", "d:\\projects\\output");
 
-        loader.set_data(properties_data);
+        loader.set_data(properties);
 
         int result = loader.save_properties(testFilePath);
         REQUIRE(result == 0);

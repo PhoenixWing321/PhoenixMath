@@ -27,7 +27,8 @@ struct ErrorCode {
         Code_READ_ERROR      = 14, ///< Error occurred during read operation
         Code_WRITE_ERROR     = 15, ///< Error occurred during write operation
         Code_INVALID_FORMAT  = 16, ///< File format is invalid
-        Code_INVALID_TYPE    = 17  ///< matrix type is invalid
+        Code_INVALID_TYPE    = 17, ///< matrix type is invalid
+        Code_MISSING_PARAMS  = 18, ///< Missing parameters
     };
 
     static const char* get_string(int code) {

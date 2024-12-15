@@ -40,6 +40,10 @@ public: // override
     };
 
 public:
+    std::shared_ptr<PropertiesData> get_properties() {
+        return properties_;
+    };
+
     /**
      * @brief Load properties from a YAML file
      * @param path Path to the YAML file
