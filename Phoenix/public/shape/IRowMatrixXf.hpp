@@ -1,5 +1,5 @@
-#ifndef PHOENIX_EigenDefine_H
-#define PHOENIX_EigenDefine_H
+#ifndef PHOENIX_IRowMatrixXf_H
+#define PHOENIX_IRowMatrixXf_H
 #include <Eigen/Dense>
 #include <vector>
 
@@ -24,4 +24,4 @@ struct IRowMatrixXf : public RowMatrixXf {
     }
 };
 } // namespace Phoenix
-#endif // PHOENIX_EigenDefine_H
+#endif // PHOENIX_IRowMatrixXf_H
