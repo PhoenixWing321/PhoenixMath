@@ -3,7 +3,7 @@
 
 #include "loader/ILoader.hpp"
 #include "utility/ErrorCode.hpp"
-#include "utility/PropertiesData.hpp"
+#include "utility/YamlData.hpp"
 
 namespace Phoenix {
 
@@ -24,7 +24,7 @@ public: // override
      * @return int Error code
      */
     virtual int load(const std::string& path, int format) override {
-        return load_properties(path);
+        return load_yaml(path);
     };
 
     /**
@@ -40,7 +40,7 @@ public: // override
     };
 
 public:
-    std::shared_ptr<PropertiesData> get_properties() {
+    std::shared_ptr<YamlData> get_properties() {
         return properties_;
     };
 
@@ -50,11 +50,11 @@ public:
      * @return int Error code
      * @note create new data_ each time call this function
      */
-    int load_properties(const std::string& path);
+    int load_yaml(const std::string& path);
     int save_properties(const std::string& path) const;
 
 private:
-    std::shared_ptr<PropertiesData> properties_;
+    std::shared_ptr<YamlData> properties_;
 };
 
 } // namespace Phoenix
