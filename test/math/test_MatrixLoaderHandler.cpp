@@ -5,10 +5,10 @@
 #include <filesystem>
 
 // Phoenix
-#include "loader/CoordsMatrixXfLoader.h"
-#include "loader/MatrixLoaderHandler.hpp"
-#include "loader/PpmLoader.h"
-#include "shape/CoordsMatrixXf.h"
+#include "Phoenix/loader/CoordsMatrixXfLoader.h"
+#include "Phoenix/loader/MatrixLoaderHandler.hpp"
+#include "Phoenix/loader/PpmLoader.h"
+#include "Phoenix/shape/CoordsMatrixXf.h"
 
 namespace Phoenix {
 namespace Test {

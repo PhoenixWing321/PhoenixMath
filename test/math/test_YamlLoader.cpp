@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
-#include "loader/YamlLoader.h"
+#include "Phoenix/loader/YamlLoader.h"
 #include <fstream>
 
 #include "../inside.hpp"

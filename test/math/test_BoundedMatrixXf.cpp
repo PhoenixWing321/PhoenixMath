@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
+#include "Phoenix/shape/BoundedMatrixXf.h"
 #include "catch2/catch.hpp"
-#include "shape/BoundedMatrixXf.h"
 
 #include "../inside.hpp"
 

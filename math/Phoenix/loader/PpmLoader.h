@@ -1,8 +1,8 @@
 #ifndef PHOENIX_PpmLoader_H
 #define PHOENIX_PpmLoader_H
 
-#include "loader/IMatrixLoader.hpp"
-#include "utility/ColorRGB.h"
+#include "Phoenix/loader/IMatrixLoader.hpp"
+#include "Phoenix/utility/ColorRGB.h"
 
 namespace Phoenix {
 

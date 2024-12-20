@@ -4,7 +4,8 @@
             "name": "Windows",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/Phoenix/public/**"
+                "${workspaceFolder}/math/**",
+                "${workspaceFolder}/math/Phoenix/**"
             ],
             "defines": [],
             "cStandard": "gnu11",

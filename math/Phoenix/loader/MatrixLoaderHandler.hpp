@@ -1,7 +1,7 @@
 #ifndef PHOENIX_MatrixLoaderHandler_H
 #define PHOENIX_MatrixLoaderHandler_H
 
-#include "loader/IMatrixLoader.hpp"
+#include "Phoenix/loader/IMatrixLoader.hpp"
 
 namespace Phoenix {
 

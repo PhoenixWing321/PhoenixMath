@@ -1,9 +1,9 @@
 #ifndef PHOENIX_YamlLoader_H
 #define PHOENIX_YamlLoader_H
 
-#include "loader/ILoader.hpp"
-#include "utility/ErrorCode.hpp"
-#include "utility/YamlData.hpp"
+#include "Phoenix/loader/ILoader.hpp"
+#include "Phoenix/utility/ErrorCode.hpp"
+#include "Phoenix/utility/YamlData.hpp"
 
 namespace Phoenix {
 

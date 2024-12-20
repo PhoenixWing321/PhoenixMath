@@ -1,6 +1,6 @@
-#include "loader/CoordsMatrixXfLoader.h"
-#include "loader/PpmLoader.h"
-#include "utility/StreamTools.hpp"
+#include "Phoenix/loader/CoordsMatrixXfLoader.h"
+#include "Phoenix/loader/PpmLoader.h"
+#include "Phoenix/utility/StreamTools.hpp"
 #include <fstream>
 #include <iomanip> // For std::setw and std::setprecision
 #include <limits>

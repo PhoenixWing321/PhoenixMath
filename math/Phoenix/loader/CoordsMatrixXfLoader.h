@@ -1,8 +1,8 @@
 #ifndef PHOENIX_CoordsMatrixXfLoader_H
 #define PHOENIX_CoordsMatrixXfLoader_H
 
-#include "loader/IMatrixLoader.hpp"
-#include "shape/CoordsMatrixXf.h"
+#include "Phoenix/loader/IMatrixLoader.hpp"
+#include "Phoenix/shape/CoordsMatrixXf.h"
 
 namespace Phoenix {
 

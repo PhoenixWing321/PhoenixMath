@@ -7,9 +7,9 @@
 #include <cmath>
 
 // Phoenix
-#include "loader/PpmLoader.h"
-#include "shape/CoordsMatrixXf.h"
-#include "utility/PhoenixDefine.hpp"
+#include "Phoenix/loader/PpmLoader.h"
+#include "Phoenix/shape/CoordsMatrixXf.h"
+#include "Phoenix/utility/PhoenixDefine.hpp"
 
 namespace fs = std::filesystem;
 
@@ -17,7 +17,7 @@ namespace fs = std::filesystem;
 
 // Phoenix
 // #define PHOENIX_DEBUG_INFO
-#include "utility/DebugMacro.h"
+#include "Phoenix/utility/DebugMacro.h"
 
 namespace Phoenix {
 

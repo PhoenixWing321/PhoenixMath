@@ -10,5 +10,5 @@ cmake --build build --config Debug --target ALL_BUILD -j 26 --
 Write-Output "Building Release version..."
 cmake --build build --config Release --target ALL_BUILD -j 26 --
 
-# export
-. $PSScriptRoot\export.ps1
+# publish
+. $PSScriptRoot\publish.ps1

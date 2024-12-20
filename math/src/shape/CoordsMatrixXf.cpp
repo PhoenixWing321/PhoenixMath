@@ -1,6 +1,6 @@
-#include "shape/CoordsMatrixXf.h"
-#include "shape/BoundedMatrixXf.h"
-#include "utility/StreamTools.hpp"
+#include "Phoenix/shape/CoordsMatrixXf.h"
+#include "Phoenix/shape/BoundedMatrixXf.h"
+#include "Phoenix/utility/StreamTools.hpp"
 #include <fstream>
 
 namespace Phoenix {

@@ -1,8 +1,8 @@
 #ifndef PHOENIX_IMatrixLoader_H
 #define PHOENIX_IMatrixLoader_H
 
-#include "shape/IRowMatrixXf.hpp"
-#include "utility/ErrorCode.hpp"
+#include "Phoenix/shape/IRowMatrixXf.hpp"
+#include "Phoenix/utility/ErrorCode.hpp"
 #include <iostream>
 
 namespace Phoenix {

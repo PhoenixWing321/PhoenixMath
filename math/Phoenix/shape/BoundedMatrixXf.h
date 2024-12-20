@@ -1,11 +1,11 @@
 #ifndef PHOENIX_BoundedMatrixXf_H
 #define PHOENIX_BoundedMatrixXf_H
 
+#include "Phoenix/shape/Bounds2f.hpp"
+#include "Phoenix/shape/IRowMatrixXf.hpp"
+#include "Phoenix/utility/ErrorCode.hpp"
+#include "Phoenix/utility/Result.hpp"
 #include "glm/glm.hpp"
-#include "shape/Bounds2f.hpp"
-#include "shape/IRowMatrixXf.hpp"
-#include "utility/ErrorCode.hpp"
-#include "utility/Result.hpp"
 #include <Eigen/Dense>
 
 namespace Phoenix {

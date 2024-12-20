@@ -1,4 +1,4 @@
-#include "shape/BoundedMatrixXf.h"
+#include "Phoenix/shape/BoundedMatrixXf.h"
 
 namespace Phoenix {
 

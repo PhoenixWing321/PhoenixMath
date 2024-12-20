@@ -1,4 +1,4 @@
-#include "shape/BoundedTensor3f.h"
+#include "Phoenix/shape/BoundedTensor3f.h"
 
 namespace Phoenix {
 

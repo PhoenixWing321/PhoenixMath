@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
-#include "utility/ColorRGB.h"
+#include "Phoenix/utility/ColorRGB.h"
 
 #include "../inside.hpp"
 

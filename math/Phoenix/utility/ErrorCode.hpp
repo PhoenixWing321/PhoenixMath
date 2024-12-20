@@ -1,7 +1,7 @@
 #ifndef PHOENIX_ErrorCode_H
 #define PHOENIX_ErrorCode_H
 
-#include "utility/PhoenixDefine.hpp"
+#include "Phoenix/utility/PhoenixDefine.hpp"
 
 namespace Phoenix {
 

@@ -1,7 +1,7 @@
 #ifndef PHOENIX_BoundedTensor3f_H
 #define PHOENIX_BoundedTensor3f_H
 
-#include "shape/Bounds2f.hpp"
+#include "Phoenix/shape/Bounds2f.hpp"
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace Phoenix {

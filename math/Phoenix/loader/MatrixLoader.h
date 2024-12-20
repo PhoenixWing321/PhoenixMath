@@ -1,7 +1,7 @@
 #ifndef PHOENIX_MatrixLoader_H
 #define PHOENIX_MatrixLoader_H
 
-#include "shape/CoordsMatrixXf.h"
+#include "Phoenix/shape/CoordsMatrixXf.h"
 #include <iostream>
 
 namespace Phoenix {

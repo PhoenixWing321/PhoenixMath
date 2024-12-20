@@ -11,13 +11,12 @@ ConvertFrom-StringData
 # Get paths from config
 $outputDir = $config.ROOT_DIR_EXPORT_LIB
 $buildDir = $config.ROOT_DIR_BUILD
-$ROOT_DIR_3rdParty = $config.ROOT_DIR_3rdParty
 
 # Copy files
-Write-Host "Copying Debug lib: $buildDir\Phoenix\Debug\PhoenixMath.lib -> $outputDir\Debug\"   
-Copy-Item -Path "$buildDir\Phoenix\Debug\PhoenixMath.lib" -Destination "$outputDir\Debug\" -Force
+Write-Host "Copying Debug lib: $buildDir\math\Debug\PhoenixMath.lib -> $outputDir\Debug\"   
+Copy-Item -Path "$buildDir\math\Debug\PhoenixMath.lib" -Destination "$outputDir\Debug\" -Force
 
-Write-Host "Copying Release lib: $buildDir\Phoenix\Release\PhoenixMath.lib -> $outputDir\bin\"   
-Copy-Item -Path "$buildDir\Phoenix\Release\PhoenixMath.lib" -Destination "$outputDir\bin\" -Force
+Write-Host "Copying Release lib: $buildDir\math\Release\PhoenixMath.lib -> $outputDir\bin\"   
+Copy-Item -Path "$buildDir\math\Release\PhoenixMath.lib" -Destination "$outputDir\bin\" -Force
 
 Write-Host "Export completed!"

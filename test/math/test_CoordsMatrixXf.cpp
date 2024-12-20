@@ -1,10 +1,10 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
-#include "loader/CoordsMatrixXfLoader.h"
-#include "loader/MatrixLoaderHandler.hpp"
-#include "shape/BoundedMatrixXf.h"
-#include "shape/CoordsMatrixXf.h"
+#include "Phoenix/loader/CoordsMatrixXfLoader.h"
+#include "Phoenix/loader/MatrixLoaderHandler.hpp"
+#include "Phoenix/shape/BoundedMatrixXf.h"
+#include "Phoenix/shape/CoordsMatrixXf.h"
 
 #include "../inside.hpp"
 
