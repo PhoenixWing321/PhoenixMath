@@ -33,7 +33,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
 
     // Read PPM header
     std::string strFormat;
-    int         width, height, maxVal;
+    int         cols, rows, maxVal;
 
     // Read format identifier (P6)
     file >> strFormat;
@@ -48,7 +48,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     }
 
     // Read dimensions
-    file >> width >> height;
+    file >> cols >> rows;
     if (file.fail()) {
         return ErrorCode::Code_READ_ERROR;
     }
@@ -63,7 +63,7 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     file.get();
 
     // Resize matrix to match image dimensions
-    matrix->resize(height, width);
+    matrix->resize(rows, cols);
 
     CoordsMatrixXf* coords = dynamic_cast<CoordsMatrixXf*>(matrix);
     // 如果矩阵是CoordsMatrixXf，则设置x和y坐标
@@ -82,8 +82,13 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     // Read pixel data
     ColorRGB color; // RGB buffer
     char*    buffer = reinterpret_cast<char*>(&color);
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
+
+    // check flip_rows
+    const int start = flip_rows ? rows - 1 : 0;
+    const int end   = flip_rows ? 0 : rows - 1;
+    const int step  = flip_rows ? -1 : 1;
+    for (int i = start; i <= end; i += step) {
+        for (int j = 0; j < cols; ++j) {
             // Read RGB values
             file.read(buffer, 3);
             if (file.fail()) return ErrorCode::Code_READ_ERROR;
@@ -129,7 +134,13 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
 
     // 写入像素数据
     const float ratio = 1.f / max_value; // 归一化系数
-    for (int i = 0; i < rows; ++i) {
+
+    // check flip_rows
+    const int start = flip_rows ? rows - 1 : 0;
+    const int end   = flip_rows ? 0 : rows - 1;
+    const int step  = flip_rows ? -1 : 1;
+
+    for (int i = start; i <= end; i += step) {
         PHOENIX_DEBUG(std::cout << std::setw(5) << i << " |")
         for (int j = 0; j < cols; ++j) {
             // 归一化并转换为RGB值

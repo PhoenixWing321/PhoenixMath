@@ -11,4 +11,6 @@ endif()
 
 # 包含的目录
 include_directories(${ROOT_DIR_3rdParty} 
-${ROOT_DIR_3rdParty}/glm)
+${ROOT_DIR_3rdParty}/glm
+${ROOT_DIR_3rdParty}/eigen
+${ROOT_DIR_3rdParty}/Catch2_Single)

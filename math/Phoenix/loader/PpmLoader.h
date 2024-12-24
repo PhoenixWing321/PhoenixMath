@@ -45,6 +45,7 @@ public:
 
 public:
     ColorRGB::ColorFormat color_format;
+    bool                  flip_rows{false}; // if flip rows
 };
 
 } // namespace Phoenix
