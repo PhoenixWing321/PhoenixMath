@@ -1,14 +1,13 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
-// std
-#include <filesystem>
-
 // Phoenix
 #include "Phoenix/loader/CoordsMatrixXfLoader.h"
 #include "Phoenix/loader/MatrixLoaderHandler.hpp"
 #include "Phoenix/loader/PpmLoader.h"
 #include "Phoenix/shape/CoordsMatrixXf.h"
+
+#include "../inside.hpp"
 
 namespace Phoenix {
 namespace Test {
@@ -50,8 +49,19 @@ TEST_CASE("MatrixLoaderHandler Color Format Tests", "[loader]") {
                 matrix.dump();
 
                 std::string filename = "test_PpmLoader_" + format_names[ i ] + ".ppm";
-                code                 = handler.save(&matrix, filename);
+                std::cout << "Saving to :" << fs::absolute(filename).string() << std::endl;
+                code = handler.save(&matrix, filename);
                 REQUIRE(code == 0);
+
+                // 测试翻转行
+                {
+                    PpmLoader loader1(formats[ i ]);
+                    loader1.flip_rows = true;
+                    auto filename1    = "test_PpmLoader_" + format_names[ i ] + "_flip.ppm";
+                    std::cout << "Saving to :" << fs::absolute(filename1).string() << std::endl;
+                    code = loader1.save(&matrix, filename1, IMatrixLoader::FORMAT_PPM);
+                    REQUIRE(code == 0);
+                }
 
                 // 清空矩阵
                 matrix.setZero();

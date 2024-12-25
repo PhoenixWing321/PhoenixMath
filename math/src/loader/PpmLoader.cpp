@@ -84,17 +84,17 @@ int PpmLoader::load(IRowMatrixXf* matrix, const std::string& path, int format) {
     char*    buffer = reinterpret_cast<char*>(&color);
 
     // check flip_rows
-    const int start = flip_rows ? rows - 1 : 0;
-    const int end   = flip_rows ? 0 : rows - 1;
-    const int step  = flip_rows ? -1 : 1;
-    for (int i = start; i <= end; i += step) {
-        for (int j = 0; j < cols; ++j) {
+    int       row  = flip_rows ? rows - 1 : 0;
+    const int step = flip_rows ? -1 : 1;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
             // Read RGB values
             file.read(buffer, 3);
             if (file.fail()) return ErrorCode::Code_READ_ERROR;
 
-            matrix->coeffRef(i, j) = ColorRGB::color_to_ratio(color, color_format);
+            matrix->coeffRef(row, j) = ColorRGB::color_to_ratio(color, color_format);
         }
+        row += step;
     }
 
     file.close();
@@ -119,8 +119,8 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
     std::ofstream file(path, std::ios::binary);
     if (!file.is_open()) return ErrorCode::Code_FILE_NOT_OPEN;
 
-    auto rows = matrix->rows();
-    auto cols = matrix->cols();
+    int rows = static_cast<int>(matrix->rows());
+    int cols = static_cast<int>(matrix->cols());
 
     // 写入PPM头部信息
     file << "P6\n";
@@ -136,20 +136,19 @@ int PpmLoader::save_ppm(const IRowMatrixXf* matrix, const std::string& path) con
     const float ratio = 1.f / max_value; // 归一化系数
 
     // check flip_rows
-    const int start = flip_rows ? rows - 1 : 0;
-    const int end   = flip_rows ? 0 : rows - 1;
-    const int step  = flip_rows ? -1 : 1;
-
-    for (int i = start; i <= end; i += step) {
-        PHOENIX_DEBUG(std::cout << std::setw(5) << i << " |")
+    int       row  = flip_rows ? rows - 1 : 0;
+    const int step = flip_rows ? -1 : 1;
+    for (int i = 0; i < rows; i++) {
+        PHOENIX_DEBUG(std::cout << std::setw(5) << row << " |")
         for (int j = 0; j < cols; ++j) {
             // 归一化并转换为RGB值
-            color = ColorRGB::ratio_to_color(matrix->coeff(i, j) * ratio, color_format);
+            color = ColorRGB::ratio_to_color(matrix->coeff(row, j) * ratio, color_format);
             file.write(pixel, 3); // 写入3个字节
             PHOENIX_DEBUG(std::cout << " " << std::setw(3) << "(" << (int)color.r << ","
                                     << (int)color.g << "," << (int)color.b << ")")
         }
         PHOENIX_DEBUG(std::cout << std::endl;)
+        row += step;
     }
 
     if (file.fail()) return ErrorCode::Code_WRITE_ERROR;
