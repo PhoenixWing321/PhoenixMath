@@ -13,7 +13,7 @@ message(STATUS "Config loaded:")
 message(STATUS "  ROOT_DIR_3rdParty: ${ROOT_DIR_3rdParty}") 
 
 
-add_subdirectory(Phoenix)
+add_subdirectory(math)
 
 # test 
 enable_testing()

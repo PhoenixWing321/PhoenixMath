@@ -1,11 +1,15 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
-#include "loader/MatrixLoader.h"
-#include "shape/CoordsMatrixXf.h"
+
+#include "Phoenix/loader/CoordsMatrixXfLoader.h"
+#include "Phoenix/loader/MatrixLoaderHandler.hpp"
+#include "Phoenix/shape/BoundedMatrixXf.h"
+#include "Phoenix/shape/CoordsMatrixXf.h"
 
 #include "../inside.hpp"
 
-using namespace Phoenix;
+namespace Phoenix {
+namespace Test {
 
 TEST_CASE("CoordsMatrixXf fill_pattern test", "[matrix]") {
     SECTION("Default constructor") {
@@ -19,29 +23,23 @@ TEST_CASE("CoordsMatrixXf fill_pattern test", "[matrix]") {
     SECTION("fill_pattern") {
 
         CoordsMatrixXf matrix;
-        matrix.fill_pattern();
+        int            rows = 10, cols = 6;
+        matrix.fill_pattern(rows, cols);
+        // matrix.dump(0);
 
         // Check dimensions
-        CHECK(matrix.rows() == 6);
-        CHECK(matrix.cols() == 11);
-        CHECK(matrix.x_coords.size() == 11);
-        CHECK(matrix.y_coords.size() == 6);
-
-        // Check x coordinates
-        CHECK(matrix.x_coords(0) == 0.0f);
-        CHECK(matrix.x_coords(1) == 2.0f);
-        CHECK(matrix.x_coords(10) == 90.0f);
-
-        // Check y coordinates
-        CHECK(matrix.y_coords(0) == 0.0f);
-        CHECK(matrix.y_coords(1) == 1.0f);
-        CHECK(matrix.y_coords(5) == 45.0f);
+        CHECK(matrix.rows() == rows);
+        CHECK(matrix.cols() == cols);
+        CHECK(matrix.x_coords.size() == cols);
+        CHECK(matrix.y_coords.size() == rows);
 
         // Check some matrix values
-        CHECK(matrix(0, 0) == 0.0f);   // Top-left
-        CHECK(matrix(0, 10) == 18.0f); // Top-right
-        CHECK(matrix(5, 10) == 20.0f); // Bottom-right
-        CHECK(matrix(2, 3) == 7.5f);   // Middle value
+        CHECK(matrix(0, 0) == 0.0f);                                // Top-left
+        CHECK(matrix(0, cols - 1) == static_cast<float>(cols - 1)); // Top-right
+        CHECK(matrix(rows - 1, cols - 1) ==
+              static_cast<float>(rows - 1 + cols - 1)); // Bottom-right
+        CHECK(matrix(rows / 2, cols / 2) ==
+              static_cast<float>(rows / 2 + cols / 2)); // Middle value
 
         // 检查行方向单调性
         {
@@ -76,18 +74,18 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
-        MatrixLoader loader;
+        CoordsMatrixXfLoader loader;
         // Save to temporary file
         const std::string temp_file_format = "CoordsMatrixXf_format_0.txt";
         std::cout << "[Row-major]" << fs::absolute(temp_file_format).string() << std::endl;
-        std::cout << " Display: (rows,cols)=", matrix1.dump(0);
-        REQUIRE(loader.save(matrix1, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
-                MatrixLoader::SUCCESS);
+        std::cout << " Display: (rows,cols)= \n", matrix1.dump(0, 10, 10);
+        REQUIRE(loader.save(&matrix1, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
+                ErrorCode::Code_SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
-        REQUIRE(loader.load(matrix2, temp_file_format, MatrixLoader::FORMAT_ROW_DEFAULT) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.load(&matrix2, temp_file_format, IMatrixLoader::FORMAT_ROW_DEFAULT) ==
+                ErrorCode::Code_SUCCESS);
 
         // Verify dimensions
         CHECK(matrix2.rows() == matrix1.rows());
@@ -115,28 +113,28 @@ TEST_CASE("CoordsMatrixXf file operations [format 0 Row-major]", "[matrix]") {
     }
 
     SECTION("File operation errors") {
-        CoordsMatrixXf matrix;
-        MatrixLoader   loader;
+        CoordsMatrixXf       matrix;
+        CoordsMatrixXfLoader loader;
 
-        // Test FILE_NOT_OPEN error
-        CHECK(loader.load(matrix, "non_existent_file.txt") == MatrixLoader::FILE_NOT_OPEN);
-        CHECK(loader.save(matrix1, "/invalid/path/file.txt") == MatrixLoader::FILE_NOT_OPEN);
+        // Test Code_FILE_NOT_OPEN error
+        CHECK(loader.load(&matrix, "non_existent_file.txt") == ErrorCode::Code_FILE_NOT_OPEN);
+        CHECK(loader.save(&matrix1, "/invalid/path/file.txt") == ErrorCode::Code_FILE_NOT_OPEN);
 
-        // Test INVALID_DIMENSIONS error
+        // Test Code_INVALID_SIZE error
         {
             std::ofstream bad_file("bad_dimensions.txt");
             bad_file << "-1\t-1\n";
             bad_file.close();
-            CHECK(loader.load(matrix, "bad_dimensions.txt") == MatrixLoader::INVALID_DIMENSIONS);
+            CHECK(loader.load(&matrix, "bad_dimensions.txt") == ErrorCode::Code_INVALID_SIZE);
             std::remove("bad_dimensions.txt");
         }
 
-        // Test READ_ERROR with corrupted file
+        // Test Code_READ_ERROR with corrupted file
         {
             std::ofstream bad_file("corrupted.txt");
             bad_file << "6\t11\nnotanumber";
             bad_file.close();
-            CHECK(loader.load(matrix, "corrupted.txt") == MatrixLoader::READ_ERROR);
+            CHECK(loader.load(&matrix, "corrupted.txt") == ErrorCode::Code_READ_ERROR);
             std::remove("corrupted.txt");
         }
     }
@@ -147,19 +145,19 @@ TEST_CASE("CoordsMatrixXf file operations [format 1 Column-major]", "[matrix]") 
     matrix1.fill_pattern();
 
     SECTION("Save and load success") {
-        MatrixLoader loader;
+        CoordsMatrixXfLoader loader;
 
         const std::string temp_file = "CoordsMatrixXf_format_1.txt";
-        REQUIRE(loader.save(matrix1, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.save(&matrix1, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                ErrorCode::Code_SUCCESS);
 
         // load into new matrix
         CoordsMatrixXf matrix2;
-        REQUIRE(loader.load(matrix2, temp_file, MatrixLoader::FORMAT_COL_COORD_FIRST) ==
-                MatrixLoader::SUCCESS);
+        REQUIRE(loader.load(&matrix2, temp_file, IMatrixLoader::FORMAT_COL_COORD_FIRST) ==
+                ErrorCode::Code_SUCCESS);
 
         std::cout << "[Column-major]" << fs::absolute(temp_file).string() << std::endl;
-        std::cout << " Display : (rows,cols)=", matrix2.dump(1);
+        std::cout << " Display: (rows,cols)= \n", matrix2.dump(1, 10, 10);
     }
 }
 
@@ -189,3 +187,28 @@ TEST_CASE("CoordsMatrixXf data validation", "[CoordsMatrixXf]") {
         }
     }
 }
+
+TEST_CASE("CoordsMatrixXf coordinate conversion", "[CoordsMatrixXf]") {
+    CoordsMatrixXf matrix;
+    matrix.fill_pattern(5, 4); // 创建一个5x4的测试矩阵
+
+    SECTION("Convert matrix coordinates to real coordinates") {
+        std::cout << "Coords Matrix =" << std::endl;
+        matrix.dump();
+
+        BoundedMatrixXf out;
+        matrix.convert(out);
+        // out.dump();
+        cout << "Bounds : " << out.bounds << std::endl;
+        std::cout << "Bounded Matrix = " << std::endl << out << std::endl;
+
+        // Bounds : {(-8.33333, -2.625), (58.3333, 23.625)}
+        CHECK(out.bounds.right == Approx(58.3333));
+        CHECK(out.bounds.top == Approx(23.625));
+        CHECK(out.bounds.left == Approx(-8.33333));
+        CHECK(out.bounds.bottom == Approx(-2.625));
+    }
+}
+
+} // namespace Test
+} // namespace Phoenix

@@ -3,20 +3,37 @@
 - github url:
 https://github.com/PhoenixWing321/PhoenixMath.git
 
-# Submodules
-need git Phoenix3rdParty
+# other modules
+please clone ref to 3rdParty
 same level folder with `PhoenixMath`
 
 
-https://github.com/PhoenixWing321/Phoenix3rdParty.git
-
+## clone
 ```
-workspace
-├─PhoenixMath
-└─Phoenix3rdParty
-   ├──catch2 
-   ├──glm
-   ├──...
+
+git clone --depth 1 https://github.com/PhoenixWing321/Catch2_Single.git
+git clone --depth 1 https://gitlab.com/libeigen/eigen.git
+git clone --depth 1 https://gitee.com/github-transport/glm.git
+```
+
+### for example 
+
+set folder = `D:\3rdParty`
+```
+3rdParty
+├──PhoenixMath
+├──Catch2_Single 
+├──eigen 
+└──glm 
+```
+## cmake
+```
+# in common.cmake, use following path
+${ROOT_DIR_3rdParty} 
+${ROOT_DIR_3rdParty}/glm
+${ROOT_DIR_3rdParty}/eigen
+${ROOT_DIR_3rdParty}/Catch2_Single
+
 ```
 
 # config

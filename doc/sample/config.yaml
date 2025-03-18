@@ -1,0 +1,13 @@
+format: 123456
+type: matrix
+args:
+  - --type
+  - matrix
+  - --base
+  - .\matrix
+  - --file
+  - matrix1.txt
+  - --file
+  - matrix2.txt
+  - --count
+  - " -1"

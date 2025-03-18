@@ -20,3 +20,17 @@ add_executable(test_CoordsMatrixXf "test_CoordsMatrixXf.cpp")
 target_link_libraries(test_CoordsMatrixXf PhoenixMath)
 add_test(NAME "test_CoordsMatrixXf" COMMAND test_CoordsMatrixXf)
 
+# === test ===
+add_executable(test_MatrixLoaderHandler "test_MatrixLoaderHandler.cpp")
+target_link_libraries(test_MatrixLoaderHandler PhoenixMath)
+add_test(NAME "test_MatrixLoaderHandler" COMMAND test_MatrixLoaderHandler)
+
+# === test ===
+add_executable(test_ColorRGB "test_ColorRGB.cpp")
+target_link_libraries(test_ColorRGB PhoenixMath)
+add_test(NAME "test_ColorRGB" COMMAND test_ColorRGB)
+
+# === test ===
+add_executable(test_YamlLoader "test_YamlLoader.cpp")
+target_link_libraries(test_YamlLoader PhoenixMath)
+add_test(NAME "test_YamlLoader" COMMAND test_YamlLoader)
