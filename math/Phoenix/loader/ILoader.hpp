@@ -3,6 +3,7 @@
 
 #include "Phoenix/utility/IData.hpp"
 #include <iostream>
+#include <memory>
 
 namespace Phoenix {
 

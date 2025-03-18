@@ -17,7 +17,18 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/my.config")
                 # 去除空格
                 string(STRIP "${KEY}" KEY)
                 string(STRIP "${VALUE}" VALUE)
-
+                
+                # 处理环境变量
+                if(VALUE MATCHES "\\$[A-Za-z0-9_]+")
+                    string(REGEX MATCHALL "\\$([A-Za-z0-9_]+)" ENV_VARS "${VALUE}")
+                    foreach(ENV_VAR ${ENV_VARS})
+                        string(SUBSTRING ${ENV_VAR} 1 -1 ENV_NAME)
+                        if(DEFINED ENV{${ENV_NAME}})
+                            string(REPLACE ${ENV_VAR} $ENV{${ENV_NAME}} VALUE "${VALUE}")
+                        endif()
+                    endforeach()
+                endif()
+                
                 # 设置变量
                 set(${KEY} "${VALUE}" CACHE STRING "" FORCE)
             endif()

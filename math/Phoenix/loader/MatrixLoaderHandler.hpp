@@ -2,6 +2,7 @@
 #define PHOENIX_MatrixLoaderHandler_H
 
 #include "Phoenix/loader/IMatrixLoader.hpp"
+#include <memory>
 
 namespace Phoenix {
 
